@@ -5,7 +5,7 @@
 // - type (an array of one or two items)
 // and optionally the form.
 
-[
+let pokemon_type = [
     {
         "form": "Fall_2019",
         "pokemon_id": 1,
