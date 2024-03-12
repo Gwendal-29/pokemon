@@ -1,14 +1,14 @@
 class Pokemon {
     static all_pokemons = {};
     constructor(name, id, form, stamina, defense, attack, gen, types){
-        this.id = id;
-        this.name = name;
-        this.form = form;
-        this.stamina = stamina;
-        this.defense = defense;
-        this.attack = attack;
-        this.gen = gen;
-        this.types = types;
+        this._id = id;
+        this._name = name;
+        this._form = form;
+        this._stamina = stamina;
+        this._defense = defense;
+        this._attack = attack;
+        this._gen = gen;
+        this._types = types;
     }
 
     toString(){
@@ -16,35 +16,35 @@ class Pokemon {
     }
 
     get name() {
-        return this.name;
+        return this._name;
     }
 
     get id() {
-        return this.id;
+        return this._id;
     }
 
     get form(){
-        return this.form;
+        return this._form;
     }
 
     get stamina(){
-        return this.stamina;
+        return this._stamina;
     }
 
     get defense(){
-        return this.defense;
+        return this._defense;
     }
 
     get attack(){
-        return this.attack;
+        return this._attack;
     }
 
     get gen(){
-        return this.gen;
+        return this._gen;
     }
 
     get types(){
-        return this.types;
+        return this._types;
     }
 
     static formatPokemonId(pokemonId) {
@@ -57,7 +57,18 @@ class Pokemon {
 
     static import_pokemon(){
         pokemon
-        .filter((p) => p.pokemon_name == "Normal")
-        .forEach((p) => all_pokemons[p.id] = new Pokemon(p.name, p.id, p.form, p.stamina, p.defense, p.attack, p.gen, []));
+        .filter((p) => p.form == "Normal")
+        .forEach((p) => Pokemon.all_pokemons[p.pokemon_id] = new Pokemon(p.pokemon_name, p.pokemon_id, p.form, p.base_stamina, p.base_defense, p.base_attack,
+             this.get_gen(p.pokemon_name), 
+             []));
+    }
+
+    static get_gen(name){
+        for (let gen in generation) {
+            if (generation[gen].some((p) => p.name == name)){
+                return gen;
+            }
+        } 
+        return "Unknown génération."
     }
 }
