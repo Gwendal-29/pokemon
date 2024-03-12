@@ -58,9 +58,20 @@ class Pokemon {
     static import_pokemon(){
         pokemon
         .filter((p) => p.form == "Normal")
-        .forEach((p) => Pokemon.all_pokemons[p.pokemon_id] = new Pokemon(p.pokemon_name, p.pokemon_id, p.form, p.base_stamina, p.base_defense, p.base_attack,
+        .forEach((p) => {
+            let types = this.get_types(p.pokemon_name);
+
+            types.map((t) => {
+                if (!Type.all_types[t]){
+                    Type.all_types[t] = new Type(t);    
+                }
+                return Type.all_types[t];
+            });
+
+            Pokemon.all_pokemons[p.pokemon_id] = new Pokemon(p.pokemon_name, p.pokemon_id, p.form, p.base_stamina, p.base_defense, p.base_attack,
              this.get_gen(p.pokemon_name), 
-             []));
+             types);
+            });
     }
 
     static get_gen(name){
@@ -70,5 +81,9 @@ class Pokemon {
             }
         } 
         return "Unknown génération."
+    }
+
+    static get_types(name){
+        return pokemon_type.find((p) => p.form == "Normal" && p.pokemon_name == name).type
     }
 }

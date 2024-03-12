@@ -3,10 +3,10 @@ class Type
 {
     static all_types = {};
 
-    constructor(name, effectiveness)
+    constructor(name)
     {
         this._name = name;
-        this._effectiveness = effectiveness;
+        this._effectiveness = type_effectiveness[name] || [];
     }
 
     toString()
