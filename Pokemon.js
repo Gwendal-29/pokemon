@@ -57,5 +57,7 @@ class Pokemon {
 
     static import_pokemon(){
         pokemon
+        .filter((p) => p.pokemon_name == "Normal")
+        .forEach((p) => all_pokemons[p.id] = new Pokemon(p.name, p.id, p.form, p.stamina, p.defense, p.attack, p.gen, []));
     }
 }
