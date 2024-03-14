@@ -1,45 +1,33 @@
-class Attack{
+class Attack {
 
     static all_attacks = {}
 
     /**
-     * 
-     * @param {*} critical_chance 
-     * @param {*} duration 
-     * @param {*} property 
-     * @param {*} energy_delta 
      * @param {*} name 
-     * @param {*} power 
-     * @param {*} stamina_loss_scaler 
-     * @param {*} type 
      * @param {*} is_charged 
-     * @param {*} critical_chance 
      */
-    constructor
-    (
-        critical_chance,
-        duration,
-        property,
-        energy_delta,
-        name,
-        power,
-        stamina_loss_scaler,
-        type,
-        is_charged,
-        critical_chance = 0
-    )
-    {
-        this._critical_chance = critical_chance;
-        this._duration = duration;
-        this._property = property;
-        this._energy_delta = energy_delta;
+    constructor(name)
+    {   
+        let attack = charged_moves.find((moves) => moves.name == name);
+        let is_charged = false;
+        if (attack == undefined) {
+            attack = fast_moves.find((moves) => moves.name == name);
+            is_charged = true;
+        } 
+        
+        if (attack == undefined) {
+            console.log("Undefined moves : " + name);
+            return undefined;
+        }
+        this._critical_chance = attack.critical_chance || 0;
+        this._duration = attack.duration;
+        this._property = attack.property;
+        this._energy_delta = attack.energy_delta;
         this._name = name;
-        this._power = power;
-        this._stamina_loss_scaler = stamina_loss_scaler;
-        this._type = type;
-        this._is_charged = is_charged;
-        this._critical_chance = critical_chance;
-    
+        this._power = attack.power;
+        this._stamina_loss_scaler = attack.stamina_loss_scaler;
+        this._type = attack.type;
+        this._is_charged = is_charged;    
     }
 
     get critical_chance(){return this._critical_chance}
@@ -52,4 +40,8 @@ class Attack{
     get type(){return this._type}
     get is_charged(){return this._is_charged}
     get critical_chance(){return this._critical_chance}
+
+    getType(){
+        return Type.all_types[this.type];
+    }
 }

@@ -1,4 +1,3 @@
-
 class Type
 {
     static all_types = {};
@@ -26,6 +25,5 @@ class Type
         return this._effectiveness[type] || 1.0;
 
     }
-
 }
 

@@ -1,6 +1,6 @@
 class Pokemon {
     static all_pokemons = {};
-    constructor(name, id, form, stamina, defense, attack, gen, types){
+    constructor(name, id, form, stamina, defense, attack, gen, types, moves){
         this._id = id;
         this._name = name;
         this._form = form;
@@ -9,6 +9,7 @@ class Pokemon {
         this._attack = attack;
         this._gen = gen;
         this._types = types;
+        this._moves = moves;
     }
 
     toString(){
@@ -47,6 +48,10 @@ class Pokemon {
         return this._types;
     }
 
+    get moves(){
+        return this._moves;
+    }
+
     static formatPokemonId(pokemonId) {
         let idString = String(pokemonId);
         while (idString.length < 3) {
@@ -61,23 +66,26 @@ class Pokemon {
         .forEach((p) => {
             let types = pokemon_type.find((ptype) => ptype.form == "Normal" && ptype.pokemon_name == p.pokemon_name).type;
 
-            types.map((t) => {
+            types.forEach((t) => {
                 if (!Type.all_types[t]){
                     Type.all_types[t] = new Type(t);    
                 }
             });
 
             let attacks = pokemon_moves.find((pattack) => pattack.form == "Normal" && pattack.pokemon_name == p.pokemon_name);
-            [...attacks.charged_moves, ...attacks.fast_moves]
-                .map((a) => {
-                    if (!Attack.all_attacks[a]){
-                        Attack.all_attacks[a] = new Attack(a);    
-                    }
-                })
+            let moves = [...attacks.charged_moves, ...attacks.fast_moves];
+
+            moves.forEach((a) => {
+                if (!Attack.all_attacks[a]){
+                    Attack.all_attacks[a] = new Attack(a);    
+                }
+            });
 
             Pokemon.all_pokemons[p.pokemon_id] = new Pokemon(p.pokemon_name, p.pokemon_id, p.form, p.base_stamina, p.base_defense, p.base_attack,
-             this.get_gen(p.pokemon_name), 
-             pokemon_type.find((ptype) => ptype.form == "Normal" && p.pokemon_name == ptype.pokemon_name).type);
+                this.get_gen(p.pokemon_name), 
+                pokemon_type.find((ptype) => ptype.form == "Normal" && p.pokemon_name == ptype.pokemon_name).type,
+                moves
+                );
             });
     }
 
@@ -95,6 +103,6 @@ class Pokemon {
     }
 
     getAttacks(){
-        return this._attack.map((a) => Attack.all_attacks[a]);
+        return this._moves.map((a) => Attack.all_attacks[a]);
     }
 }
