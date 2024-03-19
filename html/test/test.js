@@ -50,7 +50,6 @@ const getWeakestEnemies = (attackName) => {
 
 const getBestAttacksForEnemy = (name) => {
     let pokemon = Object.values(Pokemon.all_pokemons).find((p) => p.name == name);
-    
     let types = pokemon.getTypes();
 
 

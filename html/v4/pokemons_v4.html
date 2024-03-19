@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Pokemon Simulator</title>
+</head>
+<body>
+    <div class="filters">
+        <select id="gen-filter" name="" id="gen-filter">
+            <option selected value="">Aucun</option>
+        </select>
+        <input id="name-filter" name="name-filter" type="text">
+        <select name="type-filter" id="type-filter">
+            <option selected value="">Aucun</option>
+        </select>
+        
+    </div>
+    <div class="pagination">
+        <button class="prev-page">Previous</button>
+        <p class="info-page"></p>
+        <button class="next-page">Next</button>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Génération</th>
+                    <th>Types</th>
+                    <th>Endurance</th>
+                    <th>Attaque (Base)</th>
+                    <th>Défense (Base)</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="8">
+                    Chargement en cours...
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <button class="prev-page">Previous</button>
+        <p class="info-page"></p>
+        <button class="next-page">Next</button>
+    </div>
+
+    <div class="modal">
+        <h3>Pokemon Name</h3>
+
+    </div>
+    
+    <script src="../data/charged_moves.js"></script>
+    <script src="../data/cp_multiplier.js"></script>
+    <script src="../data/fast_moves.js"></script>
+    <script src="../data/generation.js"></script>
+    <script src="../data/pokemon_moves.js"></script>
+    <script src="../data/pokemon_type.js"></script>
+    <script src="../data/pokemon.js"></script>
+    <script src="../data/type_effectiveness.js"></script>
+    <script src="../data/class_type.js"></script>
+    <script src="../data/class_attack.js"></script>
+    <script src="../data/class_pokemon.js"></script>
+    <script src="script_v4.js"></script>
+</body>
+</html>
