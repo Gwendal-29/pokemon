@@ -51,6 +51,9 @@ const showPokemons = (pokemons, page) => {
 const nextButton = document.querySelector('.next-page');
 const prevButton = document.querySelector('.prev-page');
 
+nextButton.disabled = currentPage === pageTotal;
+prevButton.dispabled = currentPage === 1;
+
 nextButton.addEventListener('click', () => {
     if (currentPage < pageTotal) {
         currentPage++;
