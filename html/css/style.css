@@ -1,0 +1,59 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 10px;
+}
+
+.table-wrapper {
+    overflow-x: scroll;
+}
+table {
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: rgb(70, 1, 70);
+    color: rgb(255, 178, 255);
+}
+
+table thead th {
+    border: 1px solid rgb(255, 178, 255);
+}
+
+table tr {
+    border: 1px solid black;
+}
+
+table td {
+    position: relative;
+    height: 100px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+table td img {
+    height: 100%;
+}
+
+.pagination {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.pagination button {
+    width: 150px;
+    height: 40px;
+}
+
+.pagination button:hover {
+    cursor: pointer;
+}
