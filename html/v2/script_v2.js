@@ -1,5 +1,5 @@
 const pokemonList = document.querySelector('table>tbody');
-const pageInfo = document.querySelector('p.info-page');
+const pageInfos = document.querySelectorAll('p.info-page');
 
 var pageTotal = 0;
 var pokemonsPerPage = 25;
@@ -10,11 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showPokemons(Object.values(Pokemon.all_pokemons));
 });
 
-const showPokemons = (pokemons, page) => {
+const showPokemons = (pokemons) => {
     pokemonList.innerHTML = '';
     pageTotal = Math.ceil(pokemons.length / pokemonsPerPage);
 
-    pageInfo.textContent = currentPage + "/" + pageTotal;
+    pageInfos.forEach((info) => info.textContent = currentPage + "/" + pageTotal)
     
     const startIndex = (currentPage - 1) * pokemonsPerPage;
     const endIndex = startIndex + pokemonsPerPage;
@@ -48,37 +48,43 @@ const showPokemons = (pokemons, page) => {
     });
 }
 
-const nextButton = document.querySelector('.next-page');
-const prevButton = document.querySelector('.prev-page');
+const nextButtons = document.querySelectorAll('.next-page');
+const prevButtons = document.querySelectorAll('.prev-page');
 
-nextButton.disabled = currentPage === pageTotal;
-prevButton.dispabled = currentPage === 1;
+nextButtons.forEach((button) => {
+    button.disabled = currentPage === pageTotal;
 
-nextButton.addEventListener('click', () => {
-    if (currentPage < pageTotal) {
-        currentPage++;
-        showPokemons(Object.values(Pokemon.all_pokemons));
-    }
-    if (currentPage === pageTotal){
-        nextButton.disabled = true;
-    }
-
-    if (prevButton.disabled){
-        prevButton.disabled = false;
-    }
+    button.addEventListener('click', () => {
+        if (currentPage < pageTotal) {
+            currentPage++;
+            showPokemons(Object.values(Pokemon.all_pokemons));
+        }
+        if (currentPage === pageTotal){
+            nextButtons.forEach((b) => b.disabled = true);
+        }
+    
+        if (prevButtons[0].disabled){
+            prevButtons.forEach((b) => b.disabled = false);
+        }
+    });
 });
 
-prevButton.addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        showPokemons(Object.values(Pokemon.all_pokemons));
-    }
+prevButtons.forEach((button) => {
+    button.disabled = currentPage == 1;
 
-    if (currentPage === 1){
-        prevButton.disabled = true;
-    }
+    button.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            showPokemons(Object.values(Pokemon.all_pokemons));
+        }
 
-    if (nextButton.disabled){
-        nextButton.disabled = false;
-    }
+        if (currentPage === 1){
+            prevButtons.forEach((b) => b.disabled = true);
+        }
+    
+        if (nextButtons[0].disabled){
+            nextButtons.forEach((b) => b.disabled = false);
+        }
+    });
+    
 });
