@@ -8,15 +8,18 @@
 </head>
 <body>
     <div class="filters">
-        <select id="gen-filter" name="" id="gen-filter">
+        <label for="gen-filter">Génération:</label>
+        <select id="gen-filter" name="gen-filter">
             <option selected value="">Aucun</option>
         </select>
+        <label for="name-filter">Nom:</label>
         <input id="name-filter" name="name-filter" type="text">
-        <select name="type-filter" id="type-filter">
+        <label for="type-filter">Type:</label>
+        <select id="type-filter" name="type-filter">
             <option selected value="">Aucun</option>
         </select>
-        
     </div>
+    
     <div class="pagination">
         <button class="prev-page">Previous</button>
         <p class="info-page"></p>
@@ -44,6 +47,8 @@
             </tr>
             </tbody>
         </table>
+
+        <div id="error-message"></div>
     </div>
 
     <div class="pagination">

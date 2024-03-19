@@ -1,6 +1,8 @@
 const pokemonList = document.querySelector('table>tbody');
 const pageInfos = document.querySelectorAll('p.info-page');
 
+const errorMessage = document.getElementById('error-message');
+
 var pageTotal = 0;
 var pokemonsPerPage = 25;
 var currentPage = 1;
@@ -24,11 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
         typeFilter.appendChild(option);
     });
 
+    const generations = [...new Set(Object.values(Pokemon.all_pokemons).map(p => p.gen))];
+
+    generations.forEach((gen) => {
+        let option = document.createElement('option');
+        option.value = gen;
+        option.textContent = gen;
+        genFilter.appendChild(option);
+    })
+
 
 });
 
 const showPokemons = () => {
     pokemonList.innerHTML = '';
+    errorMessage.style.display = "none";
     pageTotal = Math.ceil(pokemonToShow.length / pokemonsPerPage);
 
     pageInfos.forEach((info) => info.textContent = currentPage + "/" + pageTotal)
@@ -37,12 +49,22 @@ const showPokemons = () => {
     const endIndex = startIndex + pokemonsPerPage;
     const currentPokemons = pokemonToShow.slice(startIndex, endIndex);
 
+    updateNextButtons();
+    updatePrevButtons();
+
+    if (currentPokemons.length === 0){
+        errorMessage.textContent = 'Nothing results...';
+        errorMessage.style.display = "flex";
+        return;
+    }
+
     currentPokemons.forEach((p) => {
         let tr = document.createElement('tr');
+        
         let info = [
             p.id,
             p.name,
-            p.gen,
+            window.screen.width > 600 ? p.gen : p.gen.replace('Generation', ""),
             p.types,
             p.stamina,
             p.attack,
@@ -73,9 +95,22 @@ const showMoreInfo = (id) => {
 const nextButtons = document.querySelectorAll('.next-page');
 const prevButtons = document.querySelectorAll('.prev-page');
 
-nextButtons.forEach((button) => {
-    button.disabled = currentPage === pageTotal;
+const updateNextButtons = () => {
+    nextButtons.forEach((button) => {
+        console.log(currentPage, pageTotal)
+        button.disabled = currentPage >= pageTotal;
+    });
+}
 
+const updatePrevButtons = () => {
+    prevButtons.forEach((button) => {
+        button.disabled = currentPage == 1;
+    });
+}
+
+updateNextButtons();
+nextButtons.forEach((button) => {
+    updateNextButtons();
     button.addEventListener('click', () => {
         if (currentPage < pageTotal) {
             currentPage++;
@@ -91,9 +126,8 @@ nextButtons.forEach((button) => {
     });
 });
 
+updatePrevButtons();
 prevButtons.forEach((button) => {
-    button.disabled = currentPage == 1;
-
     button.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
@@ -117,18 +151,11 @@ var queryFilters = {
     names: ""
 }
 const getPokemonsFiltered = () => {
-
-    console.log(queryFilters.gen, queryFilters.types, queryFilters.names)
     return Object.values(Pokemon.all_pokemons)
         .filter((p) => {
-            console.log(queryFilters.gen ? p.gen == queryFilters.gen : true,
-                 queryFilters.types ? p.types.includes(queryFilters.types) : true,
-            queryFilters.names ? p.name.includes(queryFilters.names) : true,
-            p.name)
-
-            return queryFilters.gen ? p.gen == queryFilters.gen : true
-                && queryFilters.types ? p.types.includes(queryFilters.types) : true
-                && queryFilters.names ? p.name.includes(queryFilters.names) : true
+            return (queryFilters.gen ? p.gen == queryFilters.gen : true)
+                && (queryFilters.types ? p.types.includes(queryFilters.types) : true)
+                && (queryFilters.names ? p.name.includes(queryFilters.names) : true)
         });
 }
 
@@ -152,4 +179,5 @@ typeFilter.addEventListener('change', (e) => {
     queryFilters.types = e.target.value;
     updatePokemonsFiltered();
 });
+
 
