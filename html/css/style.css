@@ -32,7 +32,6 @@ table thead {
 
 table thead th {
     border: none;
-    padding: 12px 16px;
 }
 
 table tr {
@@ -40,14 +39,12 @@ table tr {
 }
 
 table td {
-    padding: 12px 16px;
     text-align: center;
 }
 
 table td img {
-    max-width: 50px;
-    max-height: 50px;
-    border-radius: 50%;
+    height: 80%;
+    max-height: 100px;
 }
 
 table tr:nth-child(even) {
@@ -85,6 +82,7 @@ table tr:nth-child(even) {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
