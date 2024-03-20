@@ -21,7 +21,7 @@ body {
 
 /* Style de la classe .modal */
 .modal {
-    width: 70%;
+    width: 60%;
     margin: 50px auto;
     padding: 20px;
     border-radius: 10px;
@@ -31,7 +31,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
- 
 }
 
 /* Style du titre h3 */
@@ -46,7 +45,6 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-   
     margin-bottom: 20px;
 }
 
@@ -90,7 +88,9 @@ body {
     padding: 8px;
     text-align: center;
 }
-
+.modal thead th{
+    background-color: lightgray;
+}
 /* Style de la légende de la table */
 .modal table caption {
     margin-bottom: 10px;
@@ -99,41 +99,40 @@ body {
 }
 
 /* Style de la section des faiblesses et des types efficaces */
-.container_attack {
+.faiblesse {
     margin-top: 20px;
     display: flex;
     justify-content: center;
-    
 }
 
-.container_attack .liste {
+.faiblesse .liste {
     margin-right: 20px;
 }
 
-.container_attack h4 {
+.faiblesse h4 {
     font-size: 18px;
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
 }
 
-.container_attack ul {
+.faiblesse ul {
     list-style-type: none;
     padding-left: 0;
 }
 
-.container_attack ul li {
+.faiblesse ul li {
     font-size: 16px;
     color: #555;
 }
 
-.container_attack ul li:before {
+.faiblesse ul li:before {
     content: "•"; /* Utilisation d'un point comme marqueur */
     margin-right: 5px;
     color: #999;
 }
 
-.container_attack ul li:first-child:before {
+.faiblesse ul li:first-child:before {
     content: ""; /* Retirer le marqueur pour le premier élément */
 }
 
@@ -145,6 +144,19 @@ body {
     color: #999;
     cursor: pointer;
     font-size: 24px;
+    transition: 0.5s linear;
+}
+
+.cross:hover {
+    color: red;
+    transform: scale(1.02);
+}
+
+/* Style des types d'attaque */
+.type {
+    width: 2.5em;
+    height: 2em;
+    margin-right: 5px;
 }
 
 /* Media query pour les petits écrans */
@@ -158,13 +170,16 @@ body {
 </head>
 <body>
     <div class="modal">
-        <h3>Nom du Pokémon</h3>
+        <h3>Bulbizarre</h3>
         
         <div class="affichage">
             <figure>
-                <figcaption>ID Pokémon</figcaption>
+                <figcaption>009</figcaption>
                 <img class="img_more_pok" src="./html/webp/images/001.webp" alt="">
-                <figcaption>Type</figcaption>
+                <figcaption>
+                    <img  class="type" src="html/webp/types/poison.png" alt="poison">
+                    <img class = "type" src="html/webp/types/grass.png" alt="grass">
+                </figcaption>
             </figure>
             <div class="div">
                 <table>
@@ -188,24 +203,76 @@ body {
                 </table>
             </div>
         </div>
-        <div class="container_attack">
+        <div class="faiblesse">
             <div class="liste">
                 <h4>Faiblesses</h4>
                 <ul>
-                    <li>Feu</li>
-                    <li>Glace</li>
+                    <li> 
+                        <img class="type" src="./html/webp/types/fire.png" alt="">  
+                        <img class="type" src="./html/webp/types/ice.png" alt="">
+                    </li>
+                   
                 </ul>
             </div>
-            <div class="liste">
-                <h4>Efficace contre</h4>
-                <ul>
-                    <li>Roche</li>
-                    <li>Eauu</li>
-                </ul>
-            </div>
+        </div>
+        <div class="attack">
+            <!--Attaque chargée-->
+            <table id="charged_move">
+                <caption> <h3> Attaque Chargée</h3></caption>
+                <thead>
+                    <tr>
+                        <th>Nom Attaque</th>
+                        <th>Durée</th>
+                        <th>energie</th>
+                        <th>puissance</th>
+                        <th>endurance</th>
+                        <th>type</th>
+                        <th>chance coup critique</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th>Bombe beur</th>
+                        <td>5</td>
+                        <td>100</td>
+                        <td>1000</td>
+                        <td>10</td>
+                        <td>poison</td>
+                        <td> 10%</td>
+
+                </tbody>
+            </table>
+
+            <!--Attaque rapide-->
+            <table id="fast_move">
+                <caption> <h3> Attaque Rapide</h3></caption>
+                <thead>
+                    <tr>
+                        <th>Nom Attaque</th>
+                        <th>Durée</th>
+                        <th>energie</th>
+                        <th>puissance</th>
+                        <th>endurance</th>
+                        <th>type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Bombe beur</th>
+                        <td>5</td>
+                        <td>100</td>
+                        <td>1000</td>
+                        <td>10</td>
+                        <td>poison</td>
+                    </tr>
+
+                </tbody>
+            </table>
+            
         </div>
          
         <div class="cross">×</div>
     </div>
 </body>
 </html>
+
+
