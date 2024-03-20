@@ -27,8 +27,8 @@ const showPokemons = (pokemons) => {
             td.textContent = text;
             tr.appendChild(td);
         });
-        let td_img = document.createElement('td');
 
+        let td_img = document.createElement('td');
         let img = document.createElement('img');
         img.src = "../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp";
         img.alt = p.name + " image";
