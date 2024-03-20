@@ -6,6 +6,7 @@ class Attack {
     {   
         let attack = charged_moves.find((moves) => moves.name == name);
         let is_charged = false;
+        
         if (attack == undefined) {
             attack = fast_moves.find((moves) => moves.name == name);
             is_charged = true;
@@ -13,8 +14,9 @@ class Attack {
         
         if (attack == undefined) {
             console.log("Undefined moves : " + name);
-            return undefined;
+            return null;
         }
+
         this._critical_chance = attack.critical_chance || 0;
         this._duration = attack.duration;
         this._energy_delta = attack.energy_delta;
@@ -33,7 +35,6 @@ class Attack {
     get stamina_loss_scaler(){return this._stamina_loss_scaler}
     get type(){return this._type}
     get is_charged(){return this._is_charged}
-    get critical_chance(){return this._critical_chance}
 
     getType(){
         return Type.all_types[this.type];

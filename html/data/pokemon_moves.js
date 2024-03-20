@@ -13,7 +13,7 @@ let pokemon_moves = [
         "charged_moves": [
             "Sludge Bomb",
             "Seed Bomb",
-            "Power Whip"
+            "Power Whip",
         ],
         "elite_charged_moves": [],
         "elite_fast_moves": [],
@@ -29,7 +29,8 @@ let pokemon_moves = [
         "charged_moves": [
             "Sludge Bomb",
             "Seed Bomb",
-            "Power Whip"
+            "Power Whip",
+            "Ethan"
         ],
         "elite_charged_moves": [],
         "elite_fast_moves": [],

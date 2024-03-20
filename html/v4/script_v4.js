@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     Pokemon.import_pokemon();
     pokemonToShow = Object.values(Pokemon.all_pokemons);
     showPokemons();
+    console.log(pokemonToShow);
+    console.log(Attack.all_attacks)
 
     Object.keys(Type.all_types).forEach((t) => {
         let option = document.createElement('option');
@@ -64,6 +66,7 @@ const showPokemons = () => {
         let info = [
             p.id,
             p.name,
+            // enleve le "génération" du text quand la size est < 600 (UNIQUEMENT LORS DU RAFRAICHISSEMENT)
             window.screen.width > 600 ? p.gen : p.gen.replace('Generation', ""),
             p.stamina,
             p.attack,
