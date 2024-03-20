@@ -48,6 +48,10 @@ table td img {
     max-height: 100px;
 }
 
+table td:nth-child(4) img{
+    height: 40px;
+}
+
 table tr:nth-child(even) {
     background-color: #FAF9F8;
 }
@@ -133,6 +137,11 @@ table tr:nth-child(even) {
 
 
 @media screen and (max-width: 600px){
+
+    table td:nth-child(4) img{
+        height: 25px;
+    }
+
     table thead tr th:nth-child(n+5):nth-child(-n + 7), 
     table tbody tr td:nth-child(n+5):nth-child(-n + 7){
         display: none;

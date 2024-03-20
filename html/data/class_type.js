@@ -25,5 +25,9 @@ class Type
         return this._effectiveness[type] || 1.0;
 
     }
+
+    static getImgUrl(typeName){
+        return "webp/types/" + typeName.toLowerCase() + ".png";
+    }
 }
 

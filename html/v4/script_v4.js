@@ -60,36 +60,57 @@ const showPokemons = () => {
 
     currentPokemons.forEach((p) => {
         let tr = document.createElement('tr');
-        
+
         let info = [
             p.id,
             p.name,
             window.screen.width > 600 ? p.gen : p.gen.replace('Generation', ""),
-            p.types,
             p.stamina,
             p.attack,
             p.defense
         ];
 
-        info.forEach((text) => {
+        // Transforme les infos en <td>
+        info = info.map((text) => {
             let td = document.createElement('td');
             td.textContent = text;
-            tr.appendChild(td);
+            return td;
+        });
+        
+        // Créé un <td> contenant les <img> correspondant au types
+        let td_types = document.createElement('td');
+        p.types.forEach((t) => {
+            let img = document.createElement('img');
+            img.src = "../" + Type.getImgUrl(t);
+            img.alt = t + " type logo";
+            td_types.append(img);
         });
 
+        // Ajoute le <td> des imgs à la position 3.
+        info.splice(3, 0, td_types);
+
+        // Ajoute les <td> dans le <tr>
+        tr.append(...info);
+
+        // Créé un <td> contenant l'<img> correspondant au pokemon
         let td_img = document.createElement('td');
         let img = document.createElement('img');
         img.src = "../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp";
         img.alt = p.name + " image";
         td_img.appendChild(img);
+        // Ajoute l'image au tableau
         tr.appendChild(td_img);
+        // Ajout de l'affichage des détails au click.
         tr.addEventListener('click', () => showMoreInfo(Pokemon.formatPokemonId(p.id)));
+
+        // Ajout la ligne à la liste.
         pokemonList.appendChild(tr);
     });
 }
 
 const showMoreInfo = (id) => {
     // TODO
+    console.log(id);
 }
 
 const nextButtons = document.querySelectorAll('.next-page');
