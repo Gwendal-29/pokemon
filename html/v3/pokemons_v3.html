@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style.css">
     <title>Pokemon Simulator</title>
 </head>
+
 <body>
     <div class="pagination">
         <button class="prev-page">Previous</button>
@@ -13,7 +15,7 @@
         <button class="next-page">Next</button>
     </div>
     <div class="table-wrapper">
-        <table>
+        <table id="pok-list">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -27,11 +29,11 @@
                 </tr>
             </thead>
             <tbody>
-            <tr>
-                <td colspan="8">
-                    Chargement en cours...
-                </td>
-            </tr>
+                <tr>
+                    <td colspan="8">
+                        Chargement en cours...
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -42,11 +44,79 @@
         <button class="next-page">Next</button>
     </div>
 
-    <div class="modal">
-        <h3>Pokemon Name</h3>
+    <div id="modal-wrapper">
+        <div class="modal">
+            <h3>Bulbizarre</h3>
 
+            <div class="affichage">
+                <figure>
+                    <figcaption id="pok-id"></figcaption>
+                    <img class="img_more_pok" src="./html/webp/images/001.webp" alt="">
+                    <figcaption id="pok-types"></figcaption>
+                </figure>
+                <div class="div">
+                    <table>
+                        <caption id="pok-gen"></caption>
+                        <thead>
+                            <tr>
+                                <th>Attaque</th>
+                                <th>Défense</th>
+                                <th>Stamina</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="pok-stats"></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="faiblesse">
+                <div class="liste">
+                    <h4>Weakness</h4>
+                    <ul id="pok-weakness"></ul>
+                </div>
+            </div>
+            <div class="attack">
+                <h3>Charged Move(s)</h3>
+                <div class="table-wrapper">
+                    <table id="charged_move">
+                        <thead>
+                            <tr>
+                                <th>Nom Attaque</th>
+                                <th>Durée</th>
+                                <th>Energie</th>
+                                <th>Puissance</th>
+                                <!-- <th>Endurance</th> -->
+                                <th>Chance coup critique</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <!--Attaque rapide-->
+                <h3>Fast Move(s)</h3>
+                <div class="table-wrapper">
+                    <table id="fast_move">
+                        <thead>
+                            <tr>
+                                <th>Nom Attaque</th>
+                                <th>Durée</th>
+                                <th>energie</th>
+                                <th>puissance</th>
+                                <!-- <th>endurance</th> -->
+                                <th>type</th>
+                            </tr>
+                        </thead>
+                        <tbody class=></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="cross">×</div>
+        </div>
     </div>
-    
+
     <script src="../data/charged_moves.js"></script>
     <script src="../data/cp_multiplier.js"></script>
     <script src="../data/fast_moves.js"></script>
@@ -60,4 +130,5 @@
     <script src="../data/class_pokemon.js"></script>
     <script src="script_v3.js"></script>
 </body>
+
 </html>

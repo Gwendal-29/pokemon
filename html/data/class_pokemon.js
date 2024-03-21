@@ -75,22 +75,23 @@ class Pokemon {
 
             // On trouve toutes les attacks du pokemons.
             let attacks = pokemon_moves.find((pattack) => pattack.form == "Normal" && pattack.pokemon_name == p.pokemon_name);
+
             // On décompose ces attacks chargés et fast.
             let moves = [...attacks.charged_moves, ...attacks.fast_moves];
-            
+
             // Verifie si l'attack existe bien sois dans charged moves soit dans fast moves.
             // Sinon on ne l'ajoute pas dans Attack.all_attacks et on la supprime de la liste du pokémon 
             moves = moves.filter((a) => {
-                if (!Attack.all_attacks[a]){
+                if (!Attack.all_attacks[a]) {
                     let attack = new Attack(a);
-                    if (attack.name != undefined){
-                        Attack.all_attacks[a] = attack; 
+                    if (attack.name != undefined) {
+                        Attack.all_attacks[a] = attack;
                         return true;
                     } else {
                         return false;
                     }
-
                 }
+                return true;
             });
             
             // On créé le pokemon.

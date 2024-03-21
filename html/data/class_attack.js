@@ -5,11 +5,11 @@ class Attack {
     constructor(name)
     {   
         let attack = charged_moves.find((moves) => moves.name == name);
-        let is_charged = false;
+        let is_charged = true;
         
         if (attack == undefined) {
             attack = fast_moves.find((moves) => moves.name == name);
-            is_charged = true;
+            is_charged = false;
         } 
         
         if (attack == undefined) {

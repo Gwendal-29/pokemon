@@ -65,9 +65,107 @@
     </div>
 
     <div class="modal">
-        <h3>Pokemon Name</h3>
+        <h3>Bulbizarre</h3>
+        
+        <div class="affichage">
+            <figure>
+                <figcaption>009</figcaption>
+                <img class="img_more_pok" src="./html/webp/images/001.webp" alt="">
+                <figcaption>
+                    <img  class="type" src="html/webp/types/poison.png" alt="poison">
+                    <img class = "type" src="html/webp/types/grass.png" alt="grass">
+                </figcaption>
+            </figure>
+            <div class="div">
+                <table>
+                    <caption>Génération 1</caption>
+                    <thead>
+                        <tr>
+                            <th>Attaque</th>
+                            <th>PV</th>
+                            <th>Défense</th>
+                            <th>Stamina</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>130</td>
+                            <td>130</td>
+                            <td>130</td>
+                            <td>130</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="faiblesse">
+            <div class="liste">
+                <h4>Faiblesses</h4>
+                <ul>
+                    <li> 
+                        <img class="type" src="./html/webp/types/fire.png" alt="">  
+                        <img class="type" src="./html/webp/types/ice.png" alt="">
+                    </li>
+                   
+                </ul>
+            </div>
+        </div>
+        <div class="attack">
+            <!--Attaque chargée-->
+            <table id="charged_move">
+                <caption> <h3> Attaque Chargée</h3></caption>
+                <thead>
+                    <tr>
+                        <th>Nom Attaque</th>
+                        <th>Durée</th>
+                        <th>energie</th>
+                        <th>puissance</th>
+                        <th>endurance</th>
+                        <th>type</th>
+                        <th>chance coup critique</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th>Bombe beur</th>
+                        <td>5</td>
+                        <td>100</td>
+                        <td>1000</td>
+                        <td>10</td>
+                        <td>poison</td>
+                        <td> 10%</td>
 
+                </tbody>
+            </table>
+
+            <table id="fast_move">
+                <caption> <h3> Attaque Rapide</h3></caption>
+                <thead>
+                    <tr>
+                        <th>Nom Attaque</th>
+                        <th>Durée</th>
+                        <th>energie</th>
+                        <th>puissance</th>
+                        <th>endurance</th>
+                        <th>type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Bombe beur</th>
+                        <td>5</td>
+                        <td>100</td>
+                        <td>1000</td>
+                        <td>10</td>
+                        <td>poison</td>
+                    </tr>
+
+                </tbody>
+            </table>
+            
+        </div>
+        <div class="cross">×</div>
     </div>
+
     
     <script src="../data/charged_moves.js"></script>
     <script src="../data/cp_multiplier.js"></script>
