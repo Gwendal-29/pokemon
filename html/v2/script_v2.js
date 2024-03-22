@@ -87,5 +87,4 @@ prevButtons.forEach((button) => {
             nextButtons.forEach((b) => b.disabled = false);
         }
     });
-    
 });

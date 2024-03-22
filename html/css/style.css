@@ -45,6 +45,8 @@ table tr {
 }
 
 table td {
+    max-height: 100px;
+    height: 80%;
     text-align: center;
 }
 
@@ -59,6 +61,21 @@ table td:nth-child(4) img{
 
 table tr:nth-child(even) {
     background-color: #FAF9F8;
+}
+
+table th.sorting::after {
+    content: "▼";
+    color: #fff;
+    font-size: 100%;
+    margin-left: 2px;
+    top: 0;
+}
+
+table th.sorting.asc::after {
+    content: "▲";
+    color: #fff;
+    font-size: 100%;
+    top: 0;
 }
 
 .pagination {
