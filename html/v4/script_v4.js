@@ -16,6 +16,8 @@ const createTDWithImage = (url, name) => {
     return td_img;
 }
 
+const bigImage = document.getElementById('big-img');
+
 var pokemonToShow = [];
 
 const nameFilter = document.getElementById('name-filter');
@@ -117,7 +119,7 @@ const showPokemons = () => {
         });
 
         tr.appendChild(td_img);
-        
+
         // Ajout de l'affichage des détails au click.
         tr.addEventListener('click', () => showMoreInfo(p.id));
 
