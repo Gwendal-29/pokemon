@@ -25,7 +25,8 @@ const showPokemons = (pokemons) => {
         let info = [
             p.id,
             p.name,
-            p.gen,
+            // enleve le "génération" du text quand la size est < 600 (UNIQUEMENT LORS DU RAFRAICHISSEMENT)
+            window.screen.width > 600 ? p.gen : p.gen.replace('Generation', ""),
             p.types,
             p.stamina,
             p.attack,

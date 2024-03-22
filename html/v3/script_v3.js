@@ -136,7 +136,6 @@ const showMoreInfo = (id) => {
 
     let attacks = pokemon.getAttacks();
 
-    console.log(attacks)
     pokemonChargedMoves.innerHTML = "";
     attacks.filter((a) => a.is_charged).forEach((a) => {
         let tr = document.createElement('tr');
@@ -152,7 +151,7 @@ const showMoreInfo = (id) => {
     pokemonFastMoves.innerHTML = "";
     attacks.filter((a) => !a.is_charged).forEach((a) => {
         let tr = document.createElement('tr');
-        [a.name, a.duration, a.energy_delta, a.type].forEach((info) => {
+        [a.name, a.duration, a.energy_delta, a.power].forEach((info) => {
             let td = document.createElement('td');
             td.textContent = info;
             tr.appendChild(td);
@@ -160,8 +159,6 @@ const showMoreInfo = (id) => {
         tr.appendChild(createTDWithImage("../" + Type.getImgUrl(a.type), a.type + " type image"));
         pokemonFastMoves.appendChild(tr);
     });
-
-
 }
 
 closeButton.addEventListener('click', () => {
