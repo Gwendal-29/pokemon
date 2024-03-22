@@ -1,6 +1,8 @@
 const pokemonList = document.querySelector('table>tbody');
 const pageInfos = document.querySelectorAll('p.info-page');
 
+const errorMessage = document.getElementById('error-message');
+
 var pageTotal = 0;
 var pokemonsPerPage = 25;
 var currentPage = 1;
@@ -21,33 +23,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const bigImage = document.getElementById('big-img');
 
-const showPokemons = (pokemons) => {
+const showPokemons = () => {
     pokemonList.innerHTML = '';
-    pageTotal = Math.ceil(pokemons.length / pokemonsPerPage);
+    errorMessage.style.display = "none";
+    pageTotal = Math.ceil(Object.values(Pokemon.all_pokemons).length / pokemonsPerPage);
 
     pageInfos.forEach((info) => info.textContent = currentPage + "/" + pageTotal)
     
     const startIndex = (currentPage - 1) * pokemonsPerPage;
     const endIndex = startIndex + pokemonsPerPage;
-    const currentPokemons = pokemons.slice(startIndex, endIndex);
+    const currentPokemons = Object.values(Pokemon.all_pokemons).slice(startIndex, endIndex);
+
+    updateNextButtons();
+    updatePrevButtons();
+
+    if (currentPokemons.length === 0){
+        errorMessage.textContent = 'Nothing results...';
+        errorMessage.style.display = "flex";
+        return;
+    }
 
     currentPokemons.forEach((p) => {
         let tr = document.createElement('tr');
+
         let info = [
             p.id,
             p.name,
-            p.gen,
-            p.types,
+            // enleve le "génération" du text quand la size est < 600 (UNIQUEMENT LORS DU RAFRAICHISSEMENT)
+            window.screen.width > 600 ? p.gen : p.gen.replace('Generation', ""),
             p.stamina,
             p.attack,
             p.defense
         ];
 
-        info.forEach((text) => {
+        // Transforme les infos en <td>
+        info = info.map((text) => {
             let td = document.createElement('td');
             td.textContent = text;
-            tr.appendChild(td);
+            return td;
         });
+        
+        // Créé un <td> contenant les <img> correspondant au types
+        let td_types = document.createElement('td');
+        p.types.forEach((t) => {
+            let img = document.createElement('img');
+            img.src = "../" + Type.getImgUrl(t);
+            img.alt = t + " type logo";
+            td_types.append(img);
+        });
+
+        // Ajoute le <td> des imgs à la position 3.
+        info.splice(3, 0, td_types);
+
+        // Ajoute les <td> dans le <tr>
+        tr.append(...info);
 
         let td_img = createTDWithImage("../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp", p.name + " image");
         let img = td_img.querySelector('img');
@@ -65,7 +94,10 @@ const showPokemons = (pokemons) => {
 
         tr.appendChild(td_img);
 
+        // Ajout de l'affichage des détails au click.
         tr.addEventListener('click', () => showMoreInfo(p.id));
+
+        // Ajout la ligne à la liste.
         pokemonList.appendChild(tr);
     });
 }
@@ -189,13 +221,25 @@ closeButton.addEventListener('click', () => {
 const nextButtons = document.querySelectorAll('.next-page');
 const prevButtons = document.querySelectorAll('.prev-page');
 
-nextButtons.forEach((button) => {
-    button.disabled = currentPage === pageTotal;
+const updateNextButtons = () => {
+    nextButtons.forEach((button) => {
+        button.disabled = currentPage >= pageTotal;
+    });
+}
 
+const updatePrevButtons = () => {
+    prevButtons.forEach((button) => {
+        button.disabled = currentPage == 1;
+    });
+}
+
+updateNextButtons();
+nextButtons.forEach((button) => {
+    updateNextButtons();
     button.addEventListener('click', () => {
         if (currentPage < pageTotal) {
             currentPage++;
-            showPokemons(Object.values(Pokemon.all_pokemons));
+            showPokemons();
         }
         if (currentPage === pageTotal){
             nextButtons.forEach((b) => b.disabled = true);
@@ -207,13 +251,12 @@ nextButtons.forEach((button) => {
     });
 });
 
+updatePrevButtons();
 prevButtons.forEach((button) => {
-    button.disabled = currentPage == 1;
-
     button.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
-            showPokemons(Object.values(Pokemon.all_pokemons));
+            showPokemons();
         }
 
         if (currentPage === 1){
