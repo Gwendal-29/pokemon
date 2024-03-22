@@ -290,11 +290,18 @@ table tr:nth-child(even) {
     margin-right: 3px;
 }
 
+.line{
+    margin-top: 2%;
+    border-top: 1px solid black;
+    width: 200px;
+}
+
 @media only screen and (max-width: 768px) {
     .modal {
         width: 90%;
     }
 }
+
 
 
 @media screen and (max-width: 600px){
