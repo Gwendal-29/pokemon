@@ -45,8 +45,8 @@ table tr {
 }
 
 table td {
-    max-height: 100px;
-    height: 80%;
+    height: 6em;
+    position: relative;
     text-align: center;
 }
 
