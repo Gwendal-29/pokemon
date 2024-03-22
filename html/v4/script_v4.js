@@ -102,8 +102,22 @@ const showPokemons = () => {
         // Ajoute les <td> dans le <tr>
         tr.append(...info);
 
-        tr.appendChild(createTDWithImage("../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp", p.name + " image"));
+        let td_img = createTDWithImage("../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp", p.name + " image");
+        let img = td_img.querySelector('img');
+        img.addEventListener('mouseenter', () => {
+            console.log('enter')
+            bigImage.src = img.src;
+            bigImage.alt = img.alt;
+            bigImage.style.display = "flex";
+        });
 
+        img.addEventListener('mouseout', () => {
+            console.log('leaving');
+            bigImage.style.display = "none";
+        });
+
+        tr.appendChild(td_img);
+        
         // Ajout de l'affichage des détails au click.
         tr.addEventListener('click', () => showMoreInfo(p.id));
 

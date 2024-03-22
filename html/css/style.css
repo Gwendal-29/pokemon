@@ -7,6 +7,7 @@
 body {
     padding: 10px;
     font-family: 'Roboto', sans-serif;
+    position: relative;
 }
 
 .table-wrapper {
@@ -294,6 +295,19 @@ table tr:nth-child(even) {
     margin-top: 2%;
     border-top: 1px solid black;
     width: 200px;
+}
+
+#big-img {
+    display: none;
+    background-color: #68686828;
+    border-radius: 20px;
+    border: #b4b4b4 2px solid;
+    backdrop-filter: blur(2px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    height: 60%;
+    transform: translate(-50%, -50%);
 }
 
 @media only screen and (max-width: 768px) {

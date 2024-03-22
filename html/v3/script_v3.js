@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     showPokemons(Object.values(Pokemon.all_pokemons));
 });
 
+const bigImage = document.getElementById('big-img');
+
 const showPokemons = (pokemons) => {
     pokemonList.innerHTML = '';
     pageTotal = Math.ceil(pokemons.length / pokemonsPerPage);
@@ -47,7 +49,22 @@ const showPokemons = (pokemons) => {
             tr.appendChild(td);
         });
 
-        tr.appendChild(createTDWithImage("../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp", p.name + " image"));
+        let td_img = createTDWithImage("../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp", p.name + " image");
+        let img = td_img.querySelector('img');
+        img.addEventListener('mouseenter', () => {
+            console.log('enter')
+            bigImage.src = img.src;
+            bigImage.alt = img.alt;
+            bigImage.style.display = "flex";
+        });
+
+        img.addEventListener('mouseout', () => {
+            console.log('leaving');
+            bigImage.style.display = "none";
+        });
+
+        tr.appendChild(td_img);
+
         tr.addEventListener('click', () => showMoreInfo(p.id));
         pokemonList.appendChild(tr);
     });
