@@ -39,4 +39,8 @@ class Attack {
     getType(){
         return Type.all_types[this.type];
     }
+
+    toString(){
+        return "[Attack: " + this.name + (this.is_charged ? " (Charged)" : "") + ", Power: " + this.power + ", Energy delta: " + this.energy_delta + ", Type: "  + this.type + "]";
+    }
 }

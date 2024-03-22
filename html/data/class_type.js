@@ -8,9 +8,8 @@ class Type
         this._effectiveness = type_effectiveness[name] || [];
     }
 
-    toString()
-    {
-
+    toString(){
+        return "[Type: " + this.name + "]";
     }
 
     get name(){

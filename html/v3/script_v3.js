@@ -100,6 +100,10 @@ const pokemonFastMoves = modal.querySelector('#fast_move>tbody')
 const showMoreInfo = (id) => {
     let pokemon = Pokemon.all_pokemons[id];
 
+    console.log(pokemon.toString());
+    console.log(pokemon.getAttacks()[0].toString());
+    console.log(pokemon.getTypes()[0].toString());
+
     modal.style.display = "flex";
     
     pokemonName.innerText = pokemon.name;

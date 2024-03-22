@@ -119,4 +119,8 @@ class Pokemon {
     getAttacks(){
         return this._moves.map((a) => Attack.all_attacks[a]);
     }
+
+    toString(){
+        return "[Pokemon: " + this.name + ", Attack: " + this.attack + ", Defense: " + this.defense + ", Stamina: " + this.stamina + ", Types: "  + this.types.join(' & ') + "]";
+    }
 }
