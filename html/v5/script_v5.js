@@ -3,9 +3,22 @@ const pageInfos = document.querySelectorAll('p.info-page');
 
 const errorMessage = document.getElementById('error-message');
 
+const getCookie = (name) => {
+    const cookies = document.cookie.split('; ');
+    let cookie = cookies.find((c) => c.split('=')[0] == name);
+    if (cookie) return decodeURI(cookie.split("=")[1]);
+    return undefined;
+}
+
+const setCookie = (name, value, expire) => {
+    const date = new Date();
+    date.setDate(date + expire);
+    document.cookie = `${name}=${encodeURI(value)}; expires=${date.toUTCString()};`
+}
+
 var pageTotal = 0;
 var pokemonsPerPage = 25;
-var currentPage = 1;
+var currentPage = getCookie("page") || 1;
 
 const createTDWithImage = (url, name) => {
     let td_img = document.createElement('td');
@@ -27,39 +40,6 @@ const typeFilter = document.getElementById('type-filter');
 var currentButtonSort = null;
 
 const sortingButtons = document.querySelectorAll('table.sortable th');
-
-document.addEventListener('DOMContentLoaded', () => {
-    Pokemon.import_pokemon();
-    pokemonToShow = Object.values(Pokemon.all_pokemons);
-    showPokemons();
-
-    Object.keys(Type.all_types).forEach((t) => {
-        let option = document.createElement('option');
-        option.value = t;
-        option.textContent = t;
-        typeFilter.appendChild(option);
-    });
-
-    const generations = [...new Set(Object.values(Pokemon.all_pokemons).map(p => p.gen))];
-
-    generations.forEach((gen) => {
-        let option = document.createElement('option');
-        option.value = gen;
-        option.textContent = gen;
-        genFilter.appendChild(option);
-    });
-    
-    currentButtonSort = document.querySelector('table.sortable th:first-child');
-    sortingButtons.forEach((b) => {
-        if (b.dataset.order != null){
-            b.addEventListener('click', (e) => {
-                handleClickSortPokemon(e.target);
-            });
-        }
-    });
-
-
-});
 
 const showPokemons = () => {
     pokemonList.innerHTML = '';
@@ -185,6 +165,7 @@ const pokemonChargedMoves = modal.querySelector('#charged_move>tbody');
 const pokemonFastMoves = modal.querySelector('#fast_move>tbody')
 
 const showMoreInfo = (id) => {
+    getCookie();
     let pokemon = Pokemon.all_pokemons[id];
 
     modal.style.display = "flex";
@@ -273,6 +254,7 @@ nextButtons.forEach((button) => {
     button.addEventListener('click', () => {
         if (currentPage < pageTotal) {
             currentPage++;
+            setCookie('page', currentPage, 7);
             showPokemons();
         }
         if (currentPage === pageTotal){
@@ -290,6 +272,7 @@ prevButtons.forEach((button) => {
     button.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
+            setCookie('page', currentPage, 7);
             showPokemons();
         }
 
@@ -308,8 +291,8 @@ var queryFilters = {
     gen: null,
     types: null,
     names: "",
-    sortBy: "id",
-    sortByReversed: false
+    sortBy: getCookie("order") || "id",
+    sortByReversed: getCookie("reversed") == "true" || false
 }
 
 const getPokemonsFiltered = () => {
@@ -373,8 +356,48 @@ const sortPokemon = (by, reverse = false) => {
             return -1 * coef;
         }
     });
+    setCookie('order', by, 7);
+    setCookie('reversed', reverse, 7);
 }
- 
+
+document.addEventListener('DOMContentLoaded', () => {
+    Pokemon.import_pokemon();
+    
+    updatePokemonsToShow(false);
+
+    const thOrders = Array.from(document.querySelectorAll('#pok-list th'));
+
+    // Initialisation des valeurs (a cause des cookies)
+    currentButtonSort = thOrders.find((e) => e.dataset.order == queryFilters.sortBy);
+    currentButtonSort.classList.add('sorting');
+    if (queryFilters.sortByReversed) currentButtonSort.classList.add('asc');
+    
+    showPokemons();
+
+    Object.keys(Type.all_types).forEach((t) => {
+        let option = document.createElement('option');
+        option.value = t;
+        option.textContent = t;
+        typeFilter.appendChild(option);
+    });
+
+    const generations = [...new Set(Object.values(Pokemon.all_pokemons).map(p => p.gen))];
+
+    generations.forEach((gen) => {
+        let option = document.createElement('option');
+        option.value = gen;
+        option.textContent = gen;
+        genFilter.appendChild(option);
+    });
+    
+    sortingButtons.forEach((b) => {
+        if (b.dataset.order != null){
+            b.addEventListener('click', (e) => {
+                handleClickSortPokemon(e.target);
+            });
+        }
+    });
+});
 
 
 
