@@ -302,7 +302,7 @@ const getPokemonsFiltered = () => {
         .filter((p) => {
             return (queryFilters.gen ? p.gen == queryFilters.gen : true)
                 && (queryFilters.types ? p.types.includes(queryFilters.types) : true)
-                && (queryFilters.names ? p.name.includes(queryFilters.names) : true)
+                && (queryFilters.names ? p.name.toLowerCase().includes(queryFilters.names.toLowerCase()) : true)
         });
 }
 

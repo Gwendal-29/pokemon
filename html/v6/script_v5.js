@@ -296,11 +296,18 @@ var queryFilters = {
 }
 
 const getPokemonsFiltered = () => {
+    const isPokemonName = (pokemon) => {
+        if (queryFilters.names && queryFilters.names.startsWith("fr&")){
+            return (pokemon_names[pokemon.id].fr.toLowerCase().includes(queryFilters.names.replace('fr&', '').toLowerCase()))
+        } else {
+            return (queryFilters.names ? pokemon.name.toLowerCase().includes(queryFilters.names.toLowerCase()) : true);
+        }
+    }
     return Object.values(Pokemon.all_pokemons)
         .filter((p) => {
             return (queryFilters.gen ? p.gen == queryFilters.gen : true)
                 && (queryFilters.types ? p.types.includes(queryFilters.types) : true)
-                && (queryFilters.names ? p.name.toLowerCase().includes(queryFilters.names.toLowerCase()) : true)
+                && isPokemonName(p)
         });
 }
 
@@ -346,16 +353,16 @@ const handleClickSortPokemon = (element) => {
 }
 
 const sortPokemon = (by, reverse = false) => {
-    let coef = reverse ? -1 : 1;
-        pokemonToShow.sort((a, b) => {
-            if (a[by] > b[by]){
-                return 1 * coef;
-            } else if (a[by] == b[by]){
-                return a.name.localeCompare(b.name);
-            } else {
-                return -1 * coef;
-            }
-        });
+    let coef = reverse ? -1 : 1;    
+    pokemonToShow.sort((a, b) => {
+        if (a[by] > b[by]){
+            return 1 * coef;
+        } else if (a[by] == b[by]){
+            return a.name.localeCompare(b.name);
+        } else {
+            return -1 * coef;
+        }
+    });
     setCookie('order', by, 7);
     setCookie('reversed', reverse, 7);
 }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Pokémon</title>
+</head>
+<body>
+    <script>
+
+        async function getPokemonNames() {
+            try {
+                const pokemonNames = {};
+
+                // Récupération de la liste des Pokémon
+                const pokemonListResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
+                const pokemonListData = await pokemonListResponse.json().then((res) => res.results);
+                console.log(pokemonListData)
+                // Pour chaque Pokémon, récupération de ses détails pour obtenir les noms
+                for (const pokemon of pokemonListData) {
+                    console.log(pokemon);
+                    const pokemonData = await fetch(pokemon.url).then((res) => res.json());
+                    console.log(pokemonData);
+                    const speciesUrl = pokemonData.species.url;
+                    const speciesData = await fetch(speciesUrl).then((res) => res.json());
+
+                    const id = pokemonData.id;
+                    const frenchNameObject = speciesData.names.find(name => name.language.name === 'fr');
+                    const englishName = pokemon.name.replace(/-/g, " ").replace(/^\w/, c => c.toUpperCase()); // Convertit le nom anglais en format lisible
+                    const frenchName = frenchNameObject ? frenchNameObject.name : "Nom français non trouvé";
+
+                    pokemonNames[id] = {
+                        "fr": frenchName,
+                        "en": englishName
+                        // Vous pouvez ajouter d'autres langues si nécessaire en suivant le même modèle
+                    };
+                }
+
+                // Téléchargement du fichier JSON
+                const jsonContent = JSON.stringify(pokemonNames, null, 2);
+                const blob = new Blob([jsonContent], { type: 'application/json' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'pokemon_names.json';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                console.log("Fichier JSON des noms des Pokémon créé avec succès !");
+            } catch (error) {
+                console.error("Une erreur s'est produite :", error);
+            }
+        }
+
+        // Appel de la fonction pour récupérer les noms des Pokémon et les enregistrer dans un fichier JSON
+        console.log("getPokemon")
+        getPokemonNames();
+    </script>
+</body>
+</html>
