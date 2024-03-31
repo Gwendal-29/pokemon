@@ -164,9 +164,17 @@ const pokemonWeakness = modal.querySelector('#pok-weakness');
 const pokemonChargedMoves = modal.querySelector('#charged_move>tbody');
 const pokemonFastMoves = modal.querySelector('#fast_move>tbody')
 
+var currentPokemon = null;
+var selectedFastAttack = null;
+var selectedChargedAttack = null;
+
+const pokemonBattle = new Battle();
+
 const showMoreInfo = (id) => {
     getCookie();
     let pokemon = Pokemon.all_pokemons[id];
+
+    currentPokemon = pokemon;
 
     modal.style.display = "flex";
     
@@ -214,6 +222,18 @@ const showMoreInfo = (id) => {
         });
         pokemonChargedMoves.appendChild(tr);
         tr.appendChild(createTDWithImage("../" + Type.getImgUrl(a.type), a.type + " type image"));
+        tr.addEventListener('click', () => {
+            if (selectedChargedAttack){
+                let currentSelected = Array.from(pokemonChargedMoves.rows).find((r) => {
+                    return r.cells[0].textContent == selectedChargedAttack.name
+                });
+                if (currentSelected) {
+                    currentSelected.classList.remove('selected');
+                }
+            }
+            tr.classList.add('selected');
+            selectedChargedAttack = a;
+        });
     });
 
     pokemonFastMoves.innerHTML = "";
@@ -225,8 +245,28 @@ const showMoreInfo = (id) => {
             tr.appendChild(td);
         });
         tr.appendChild(createTDWithImage("../" + Type.getImgUrl(a.type), a.type + " type image"));
+
+        tr.addEventListener('click', () => {
+            if (selectedFastAttack){
+                let currentSelected = Array.from(pokemonFastMoves.rows).find((r) => {
+                    return r.cells[0].textContent == selectedFastAttack.name
+                });
+                if (currentSelected) {
+                    currentSelected.classList.remove('selected');
+                }
+            }
+            tr.classList.add('selected');
+            selectedFastAttack = a;
+        });
+
         pokemonFastMoves.appendChild(tr);
     });
+}
+
+const setBattlePokemon = (ally = true) => {
+    let pokBattle = new PokemonFighting(currentPokemon, selectedFastAttack, selectedChargedAttack);
+    
+    ally ? pokemonBattle.ally = pokBattle : pokemonBattle.enemy = pokBattle;
 }
 
 closeButton.addEventListener('click', () => {
@@ -404,7 +444,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    const startButton = document.getElementById('start-battle');
+
+    startButton.addEventListener('click', () => {
+        console.log("click for start");
+        pokemonBattle.startBattle();
+    })
 });
+
 
 
 

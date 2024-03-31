@@ -74,7 +74,7 @@
             </div>
             <img src="../webp/images/001.webp" alt="">
         </div>
-        <div id="pok-enemy-ally" class="miss"> Choose Enemy Pokemon </div>
+        <div id="pok-enemy-ally" class="miss"> Choose Ally Pokemon </div>
         <div class="pok-battle pok-ally">
             <img src="../webp/images/001.webp" alt="">
             <div class="status">
@@ -82,6 +82,7 @@
                 <p class="hp">125</p>
             </div>
         </div>
+        <button id="start-battle">start battle</button>
     </div>
 
     <img src="" alt="" id="big-img">
@@ -157,6 +158,8 @@
                 </div>
             </div>
             <div id="cross">×</div>
+            <button onclick="setBattlePokemon(false)">Set as enemy</button>
+            <button onclick="setBattlePokemon()">Set as ally</button>
         </div>
     </div>
 
@@ -173,6 +176,7 @@
     <script src="../data/class_type.js"></script>
     <script src="../data/class_attack.js"></script>
     <script src="../data/class_pokemon.js"></script>
+    <script src="battle.js"></script>
     <script src="script_v5.js"></script>
 </body>
 </html>

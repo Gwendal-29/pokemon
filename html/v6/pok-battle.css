@@ -17,6 +17,8 @@
 .pok-battle img {
     margin: auto;
     height: 20vh;
+    transform: scaleY(1);
+    transition: transform 0.1s ease-in;
 }
 
 .pok-battle.pok-ally img {
@@ -46,4 +48,18 @@
     margin-top: 10px;
     text-align: center;
     font-size: 1.3em;
+}
+
+#fast_move .selected, #charged_move .selected {
+    background-color: red;
+}
+
+.pok-battle.pok-ally img.little {
+    transform: scaleX(-1) scaleY(0.8);
+    transition: transform 0.1s ease-in;
+}
+
+.pok-battle.pok-enemy img.little {
+    transform: scaleY(0.8);
+    transition: transform 0.1s ease-in;
 }
