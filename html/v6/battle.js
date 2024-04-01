@@ -30,6 +30,7 @@ class PokemonFighting {
                 // TODO : Chance critique
                 setTimeout(() => {
                     this.hp = this.hp - enemy.charged_move.power * efficacity;
+                    Battle.updateHP(true);
                     enemy.is_attacking = false;
                     console.log("Charged move finish");
 
@@ -45,6 +46,7 @@ class PokemonFighting {
                 enemy.energy = enemy.energy + enemy.fast_move.energy_delta;
                 setTimeout(() =>{
                     this.hp = this.hp - enemy.fast_move.power * efficacity;
+                    Battle.updateHP(true);
                     enemy.is_attacking = false;
                     console.log("set false");
 
@@ -99,6 +101,7 @@ class Battle {
                 Battle.pokemonAlly.style.display = "grid";
                 Battle.noPokemonAlly.style.display = "none";
                 this.setDisplayPokemon(ally);
+                Battle.updateHP(ally);
             } else {
                 Battle.pokemonAlly.style.display = "none";
                 Battle.noPokemonAlly.style.display = "block";
@@ -108,10 +111,19 @@ class Battle {
                 Battle.pokemonEnemy.style.display = "grid";
                 Battle.noPokemonEnemy.style.display = "none";
                 this.setDisplayPokemon(ally);
+                Battle.updateHP(ally);
             } else {
                 Battle.pokemonEnemy.style.display = "none";
                 Battle.noPokemonEnemy.style.display = "block";
             }
+        }
+    }
+
+    static updateHP(ally){
+        if (ally && this.ally){
+            Battle.pokemonAlly.querySelector('.hp').textContent = this.ally.pokemon.stamina;
+        } else if (!ally && this.enemy){
+            Battle.pokemonEnemy.querySelector('.hp').textContent = this.enemy.pokemon.stamina;
         }
     }
 
