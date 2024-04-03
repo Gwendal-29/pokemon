@@ -263,10 +263,43 @@ const showMoreInfo = (id) => {
     });
 }
 
+const showToast = (message, duration = 2000) => {
+    let box = document.createElement("div");
+    box.classList.add(
+        "toast");
+    box.innerHTML = ` <div class="toast-content-wrapper"> 
+                      <div class="toast-message">${message}</div> 
+                      <div class="toast-progress"></div> 
+                      </div>`;
+    duration = duration || 5000;
+    box.querySelector(".toast-progress").style.animationDuration =
+        `${duration / 1000}s`;
+
+    let toastAlready =
+        document.body.querySelector(".toast");
+    if (toastAlready) {
+        toastAlready.remove();
+    }
+
+    document.body.appendChild(box)
+}
+
+const noAttackModal = document.getElementById('no-attack-modal');
+
+noAttackModal.querySelector('button').addEventListener('click', () => {
+    noAttackModal.style.display = "none";
+});
+
 const setBattlePokemon = (ally = true) => {
+    if (!selectedFastAttack || !selectedChargedAttack){
+        noAttackModal.style.display = "flex";
+        return;
+    }
     let pokBattle = new PokemonFighting(currentPokemon, selectedFastAttack, selectedChargedAttack);
     
+    let message = ally ? "Ally pokemon set !" : "Enemy pokemon set !";
     ally ? pokemonBattle.ally = pokBattle : pokemonBattle.enemy = pokBattle;
+    showToast(message);
 }
 
 closeButton.addEventListener('click', () => {
@@ -452,7 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pokemonBattle.startBattle();
     })
 });
-
 
 
 

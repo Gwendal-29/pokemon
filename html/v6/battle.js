@@ -1,7 +1,8 @@
 class PokemonFighting {
-    constructor (pokemon, fast_move, charged_move, hp = 100){
+    constructor (pokemon, fast_move, charged_move, max_hp = 100){
         this._pokemon = pokemon;
-        this._hp = hp;
+        this._max_hp = max_hp;
+        this._hp = max_hp;
         this._fast_move = fast_move;
         this._charged_move = charged_move;
         this._energy = 0;
@@ -14,6 +15,7 @@ class PokemonFighting {
     get energy(){ return this._energy; }
     get is_attacking(){ return this._is_attacking; }
     get hp() { return this._hp; }
+    get max_hp() { return this._max_hp; }
 
     set energy(energy){ this._energy = energy; }
     set hp(hp){ this._hp = hp; }
@@ -29,8 +31,10 @@ class PokemonFighting {
                 let efficacity = this.getAttackEfficacity(enemy.charged_move);
                 // TODO : Chance critique
                 setTimeout(() => {
-                    this.hp = this.hp - enemy.charged_move.power * efficacity;
-                    Battle.updateHP(true);
+                    let new_hp = this.hp - enemy.charged_move.power * efficacity;
+                    this.hp = new_hp > 0 ? new_hp : 0;
+                    
+                    Battle.updateHP(true, this);
                     enemy.is_attacking = false;
                     console.log("Charged move finish");
 
@@ -45,8 +49,9 @@ class PokemonFighting {
                 let efficacity = this.getAttackEfficacity(enemy.fast_move);
                 enemy.energy = enemy.energy + enemy.fast_move.energy_delta;
                 setTimeout(() =>{
-                    this.hp = this.hp - enemy.fast_move.power * efficacity;
-                    Battle.updateHP(true);
+                    let new_hp = this.hp - enemy.fast_move.power * efficacity
+                    this.hp = new_hp > 0 ? new_hp : 0;
+                    Battle.updateHP(true, this);
                     enemy.is_attacking = false;
                     console.log("set false");
 
@@ -101,7 +106,7 @@ class Battle {
                 Battle.pokemonAlly.style.display = "grid";
                 Battle.noPokemonAlly.style.display = "none";
                 this.setDisplayPokemon(ally);
-                Battle.updateHP(ally);
+                Battle.updateHP(ally, this.ally);
             } else {
                 Battle.pokemonAlly.style.display = "none";
                 Battle.noPokemonAlly.style.display = "block";
@@ -111,7 +116,7 @@ class Battle {
                 Battle.pokemonEnemy.style.display = "grid";
                 Battle.noPokemonEnemy.style.display = "none";
                 this.setDisplayPokemon(ally);
-                Battle.updateHP(ally);
+                Battle.updateHP(ally, this.enemy);
             } else {
                 Battle.pokemonEnemy.style.display = "none";
                 Battle.noPokemonEnemy.style.display = "block";
@@ -119,11 +124,11 @@ class Battle {
         }
     }
 
-    static updateHP(ally){
-        if (ally && this.ally){
-            Battle.pokemonAlly.querySelector('.hp').textContent = this.ally.pokemon.stamina;
-        } else if (!ally && this.enemy){
-            Battle.pokemonEnemy.querySelector('.hp').textContent = this.enemy.pokemon.stamina;
+    static updateHP(ally, pokemon){
+        if (ally){
+            Battle.pokemonAlly.querySelector('.hp').textContent = pokemon.hp;
+        } else {
+            Battle.pokemonEnemy.querySelector('.hp').textContent = pokemon.hp;
         }
     }
 
@@ -139,6 +144,7 @@ class Battle {
 
     startBattle(){
         if (this._battle) return;
+        this.resetBattle();
         this._battle = true;
 
         console.log('battle start !!')
@@ -151,8 +157,18 @@ class Battle {
                 }
             } else {
                 clearInterval(enemyAttackInterval);
+                this.finishBattle();
             }
         }, 100);
+    }
+
+    finishBattle(){
+        this._battle = false;
+    }
+
+    resetBattle(){
+        this.ally.hp = this.ally.max_hp;
+        this.enemy.hp = this.enemy.max_hp;
     }
 
 }

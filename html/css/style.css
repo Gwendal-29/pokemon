@@ -157,7 +157,7 @@ table th.sorting.asc::after {
     text-align: center;
 }
 
-#modal-wrapper {
+.modal-wrapper {
     position: fixed;
     top: 0;
     left: 0;
