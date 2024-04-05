@@ -21,7 +21,7 @@ class PokemonFighting {
     set hp(hp){ this._hp = hp; }
     set is_attacking(is_attacking) { this._is_attacking = is_attacking; }
 
-    attackBy(enemy, img) {
+    attackBy(enemy, img, ally) {
         if (!enemy.is_attacking){
             enemy.is_attacking = true;
             console.log("energy delta", enemy.charged_move.energy_delta * -1)
@@ -51,7 +51,7 @@ class PokemonFighting {
                 setTimeout(() =>{
                     let new_hp = this.hp - enemy.fast_move.power * efficacity
                     this.hp = new_hp > 0 ? new_hp : 0;
-                    Battle.updateHP(true, this);
+                    Battle.updateHP(ally, this);
                     enemy.is_attacking = false;
                     console.log("set false");
 
@@ -80,6 +80,8 @@ class Battle {
 
     static noPokemonEnemy = document.getElementById('pok-enemy-miss');
     static noPokemonAlly = document.getElementById('pok-enemy-ally');
+
+    static finishDiv = document.getElementById('finish');
 
     constructor (){
         this._enemy = null;
@@ -152,8 +154,11 @@ class Battle {
         const enemyAttackInterval = setInterval(() => {
             if (this.enemy && this.ally.hp > 0) {
                 if (!this.enemy.is_attacking){
-                    this.ally.attackBy(this.enemy, Battle.pokemonAlly.querySelector('img'));
-                    console.log(this.ally.hp)
+                    if (Math.floor(Math.random() * 1000) > 900){
+                        this.ally.attackBy(this.enemy, Battle.pokemonAlly.querySelector('img'), true);
+                    } else {
+                        console.log("echec ! ");
+                    }
                 }
             } else {
                 clearInterval(enemyAttackInterval);
@@ -162,13 +167,19 @@ class Battle {
         }, 100);
     }
 
-    finishBattle(){
+    finishBattle(ally){
         this._battle = false;
+        let name = ally ? this.ally.pokemon.name : this.enemy.pokemon.name;
+        Battle.finishDiv.textContent = 'Le ' + name + ' ' + (ally ? "allié" : "enemie") + " remporte le combat !";
+        Battle.finishDiv.classList.add('show');
     }
 
     resetBattle(){
         this.ally.hp = this.ally.max_hp;
         this.enemy.hp = this.enemy.max_hp;
+        Battle.updateHP(true, this.ally);
+        Battle.updateHP(false, this.enemy);
+        Battle.finishDiv.classList.remove('show');
     }
 
 }
