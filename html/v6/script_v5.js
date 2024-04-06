@@ -484,6 +484,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("click for start");
         pokemonBattle.startBattle();
     })
+
+    const moveButton = document.querySelector('.move');
+    moveButton.addEventListener('click', () => {
+        if (pokemonBattle._battle){
+            pokemonBattle.enemy.attackBy(pokemonBattle.ally, Battle.pokemonEnemy.querySelector('img'), false);
+        }
+    })
 });
 
 
