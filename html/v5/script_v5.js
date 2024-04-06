@@ -113,8 +113,11 @@ const showPokemons = () => {
         tr.appendChild(td_img);
 
         // Ajout de l'affichage des détails au click.
-        tr.addEventListener('click', () => showMoreInfo(p.id));
-
+        tr.addEventListener('click', (e) => {
+            showMoreInfo(p.id);
+            // Evite d'appeler l'événement sur via 'document' (qui ferme la modal)
+            e.stopPropagation();
+        });
         // Ajout la ligne à la liste.
         pokemonList.appendChild(tr);
     });
@@ -151,24 +154,26 @@ const getBestAttacksForEnemy = (name) => {
     }, {types: [], efficiency: -1}).types;
 }
 
-const modal = document.getElementById('modal-wrapper');
+const modalWrapper = document.getElementById('modal-details');
+const modalDetails = modalWrapper.querySelector('.modal'); 
+
 const closeButton = document.getElementById('cross');
 
-const pokemonName = modal.querySelector('h3');
-const pokemonId = modal.querySelector('#pok-id');
-const pokemonImg = modal.querySelector('.img_more_pok');
-const generationField = modal.querySelector('#pok-gen');
-const pokemonTypes = modal.querySelector('#pok-types');
-const pokemonStats = modal.querySelector('#pok-stats');
-const pokemonWeakness = modal.querySelector('#pok-weakness');
-const pokemonChargedMoves = modal.querySelector('#charged_move>tbody');
-const pokemonFastMoves = modal.querySelector('#fast_move>tbody')
+const pokemonName = modalWrapper.querySelector('h3');
+const pokemonId = modalWrapper.querySelector('#pok-id');
+const pokemonImg = modalWrapper.querySelector('.img_more_pok');
+const generationField = modalWrapper.querySelector('#pok-gen');
+const pokemonTypes = modalWrapper.querySelector('#pok-types');
+const pokemonStats = modalWrapper.querySelector('#pok-stats');
+const pokemonWeakness = modalWrapper.querySelector('#pok-weakness');
+const pokemonChargedMoves = modalWrapper.querySelector('#charged_move>tbody');
+const pokemonFastMoves = modalWrapper.querySelector('#fast_move>tbody')
 
 const showMoreInfo = (id) => {
     getCookie();
     let pokemon = Pokemon.all_pokemons[id];
 
-    modal.style.display = "flex";
+    modalWrapper.style.display = "flex";
     
     pokemonName.innerText = pokemon.name;
     pokemonId.innerText = Pokemon.formatPokemonId(pokemon.id);
@@ -230,8 +235,18 @@ const showMoreInfo = (id) => {
 }
 
 closeButton.addEventListener('click', () => {
-    modal.style.display = "none";
+    modalWrapper.style.display = "none";
 });
+
+// Ferme lors du click en dehors 
+document.addEventListener('click', (e) => {
+    if (!modalDetails.contains(e.target)){
+        modalWrapper.style.display = "none";
+    } else {
+        console.log("containing modal")
+    }
+});
+
 
 const nextButtons = document.querySelectorAll('.next-page');
 const prevButtons = document.querySelectorAll('.prev-page');
@@ -398,7 +413,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
-
-
-

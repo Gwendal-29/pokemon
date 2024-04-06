@@ -22,10 +22,11 @@
     transition: transform 0.1s ease-in;
 }
 
+/*
 .pok-battle.pok-ally img {
     -webkit-transform: scaleX(-1);
     transform: scaleX(-1);
-}
+} */
 
 .status {
     font-size: 1.3em;
