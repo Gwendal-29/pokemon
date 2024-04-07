@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="pok-battle.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <title>Pokemon Simulator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/CSSPlugin.min.js"></script>
+        <title>Pokemon Simulator</title>
 </head>
 <body>
     <div class="filters">
@@ -75,8 +76,12 @@
             <div class="pok-battle pok-enemy">
                 <div class="status">
                     <h3 class="name">Bulbizarre</h3>
-                    <p class="hp">125</p>
-                </div>
+                    <div class="hp-info">
+                        <div class="bar">
+                            <div class="actual"></div>
+                        </div>
+                        <p class="hp">125</p>
+                    </div>                </div>
                 <img src="../webp/images/001.webp" alt="">
             </div>
             <div id="pok-enemy-ally" class="miss"> Choose Ally Pokemon </div>
@@ -84,13 +89,18 @@
                 <img src="../webp/images/001.webp" alt="">
                 <div class="status">
                     <h3 class="name">Bulbizarre</h3>
-                    <p class="hp">125</p>
+                    <div class="hp-info">
+                        <div class="bar">
+                            <div class="actual"></div>
+                        </div>
+                        <p class="hp">125</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="move">
-                
+            <div class="energy"></div>
         </div>
 
         <button id="start-battle">start battle</button>
@@ -171,14 +181,13 @@
             <div id="cross">×</div>
             <button onclick="setBattlePokemon(false)">Set as enemy</button>
             <button onclick="setBattlePokemon()">Set as ally</button>
-        </div>
-    </div>
-
-    <div id="no-attack-modal" class="modal-wrapper">
-        <div class="no-attack">
-            <h3>Impossible !</h3>
-            <p>You must select both charged and fast moves ! (click on case)</p>
-            <button>Close</button>
+            <div id="no-attack-modal" class="modal-wrapper">
+                <div class="no-attack">
+                    <h3>Impossible !</h3>
+                    <p>You must select both charged and fast moves ! (click on case)</p>
+                    <button>Close</button>
+                </div>
+            </div>
         </div>
     </div>
 

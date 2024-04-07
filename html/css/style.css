@@ -158,6 +158,7 @@ table th.sorting.asc::after {
 }
 
 .modal-wrapper {
+    z-index: 4;
     position: fixed;
     top: 0;
     left: 0;

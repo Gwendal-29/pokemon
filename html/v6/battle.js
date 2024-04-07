@@ -7,6 +7,7 @@ class PokemonFighting {
         this._charged_move = charged_move;
         this._energy = 0;
         this._is_attacking = false;
+        this._currentAttack = null;
     }
 
     get pokemon() { return this._pokemon; }
@@ -24,55 +25,37 @@ class PokemonFighting {
     attackBy(enemy, img, ally, imgEnemy, battle) {
         if (!enemy.is_attacking){
             enemy.is_attacking = true;
-            if (enemy.energy > enemy.charged_move.energy_delta * -1){
-                enemy.energy = enemy.energy + enemy.charged_move.energy_delta;
-                let efficacity = this.getAttackEfficacity(enemy.charged_move);
-                // TODO : Chance critique
-                setTimeout(() => {
-                    let new_hp = this.hp - enemy.charged_move.power * efficacity;
-                    this.hp = new_hp > 0 ? new_hp : 0;
-                    
-                    Battle.updateHP(ally, this);
-                    enemy.is_attacking = false;
-                    console.log("Charged move finish");
+            let move = enemy.energy > enemy.charged_move.energy_delta * -1 ? enemy.charged_move : enemy.fast_move;
+            enemy.energy = enemy.energy + move.energy_delta;
 
-                    img.classList.add('little');
-                    setTimeout(() => {
-                        img.classList.remove('little');
-                    }, 100);
-
-                }, enemy.charged_move.duration);
-                console.log(this.hp)
-                if (this.hp == 0){
-                    battle.finishBattle(!ally);
-                }
-            } else {
-                let efficacity = this.getAttackEfficacity(enemy.fast_move);
-                enemy.energy = enemy.energy + enemy.fast_move.energy_delta;
-                
-                let coef = ally ? 1 : -1;
+            let efficacity = this.getAttackEfficacity(move);
+            let coef = ally ? 1 : -1;
                 gsap.timeline()
-                    .to(imgEnemy, { duration: 0.1, rotation: 25 })
-                    .to({}, { duration: (enemy.fast_move.duration - 300) / 1000, }) // Ajoute une pause
-                    .to(imgEnemy, { duration: 0.1, rotation: 0, x: -200, y: 100 * coef })
+                    .to(imgEnemy, { duration: 0.1, rotation: 25 * coef })
+                    .to({}, { duration: (move.duration - 300) / 1000 })
+                    .to(imgEnemy, { duration: 0.1, rotation: 0, x: -200 * coef, y: 100 * coef })
                     .to(imgEnemy, { duration: 0.1, x: 0, y: 0 });
-
-                setTimeout(() =>{
-                    let new_hp = this.hp - enemy.fast_move.power * efficacity
+                
+                this._currentAttack = setTimeout(() =>{
+                    let new_hp = Math.round(this.hp - move.power * efficacity);
                     this.hp = new_hp > 0 ? new_hp : 0;
                     Battle.updateHP(ally, this);
+                    console.log('energy during attack : ' + enemy.energy)
+
+                    if (!ally){
+                        Battle.updateEnergy(this, enemy.energy);
+                    }
                     enemy.is_attacking = false;
 
-                    img.classList.add('little');
-                    setTimeout(() => {
-                        img.classList.remove('little');
-                    }, 120);
-                }, enemy.fast_move.duration);
-                console.log(this.hp)
-                if (this.hp == 0){
-                    battle.finishBattle(!ally);
-                }
-            }
+                    gsap.timeline()
+                     .to(img, { duration: 0.01, scaleX: -coef, scaleY: 0.8 })
+                     .to({}, { duration: 0.120, })
+                     .to(img, { duration: 0.01, scaleX: -coef, scaleY: 1 })
+
+                     if (this.hp == 0){
+                         battle.finishBattle(!ally);
+                     }
+                }, move.duration);
         }
     }
 
@@ -89,10 +72,15 @@ class Battle {
     static pokemonEnemy = document.querySelector('.pok-enemy'); 
     static pokemonAlly = document.querySelector('.pok-ally'); 
 
+    static pokemonEnemyImg = Battle.pokemonEnemy.querySelector('img'); 
+    static pokemonAllyImg = Battle.pokemonAlly.querySelector('img'); 
+
     static noPokemonEnemy = document.getElementById('pok-enemy-miss');
     static noPokemonAlly = document.getElementById('pok-enemy-ally');
 
     static finishDiv = document.getElementById('finish');
+
+    static energyMove = document.querySelector('.energy');
 
     constructor (){
         this._enemy = null;
@@ -120,6 +108,7 @@ class Battle {
                 Battle.noPokemonAlly.style.display = "none";
                 this.setDisplayPokemon(ally);
                 Battle.updateHP(ally, this.ally);
+                Battle.updateEnergy(this.ally);
             } else {
                 Battle.pokemonAlly.style.display = "none";
                 Battle.noPokemonAlly.style.display = "block";
@@ -138,11 +127,25 @@ class Battle {
     }
 
     static updateHP(ally, pokemon){
-        if (ally){
-            Battle.pokemonAlly.querySelector('.hp').textContent = pokemon.hp;
-        } else {
-            Battle.pokemonEnemy.querySelector('.hp').textContent = pokemon.hp;
+        let hpElement = ally ? Battle.pokemonAlly.querySelector('.hp') : Battle.pokemonEnemy.querySelector('.hp');
+        let hpBarElement = ally ? Battle.pokemonAlly.querySelector('.actual') : Battle.pokemonEnemy.querySelector('.actual');
+        
+        if (pokemon.hp < pokemon.max_hp/2){
+            if (pokemon.hp < pokemon.max_hp/4){
+                hpBarElement.classList.add('low');
+            } else {
+                hpBarElement.classList.add('medium');
+            }
         }
+
+        hpElement.textContent = pokemon.hp;
+        let hpBarWidth = (pokemon.hp / pokemon.max_hp) * 100;
+        gsap.to(hpBarElement, { duration: 0.3, width: hpBarWidth + '%' });
+    }
+    
+    static updateEnergy(pokemon, energy = 0){
+        const energyBarHeight = (1 - (energy / pokemon.charged_move.energy_delta * -1)) * 100;
+        gsap.to(Battle.energyMove, { duration: 0.3, height: energyBarHeight + '%' });
     }
 
     setDisplayPokemon(ally = true){
@@ -160,15 +163,12 @@ class Battle {
         this.resetBattle();
         this._battle = true;
 
-        console.log('battle start !!')
 
         const enemyAttackInterval = setInterval(() => {
             if (this._battle && this.enemy && this.ally.hp > 0) {
                 if (!this.enemy.is_attacking){
                     if (Math.floor(Math.random() * 1000) > 900){
-                       // this.ally.attackBy(this.enemy, Battle.pokemonAlly.querySelector('img'), true, Battle.pokemonEnemy.querySelector('img'), this);
-                    } else {
-                        console.log("echec ! ");
+                       this.ally.attackBy(this.enemy, Battle.pokemonAllyImg, true, Battle.pokemonEnemyImg, this);
                     }
                 }
             } else {
@@ -179,6 +179,8 @@ class Battle {
 
     finishBattle(ally){
         this._battle = false;
+        clearTimeout(this.ally._currentAttack);
+        clearTimeout(this.enemy._currentAttack);
         let name = ally ? this.ally.pokemon.name : this.enemy.pokemon.name;
         Battle.finishDiv.textContent = 'Le ' + name + ' ' + (ally ? "allié" : "enemie") + " remporte le combat !";
         Battle.finishDiv.classList.add('show');
@@ -188,6 +190,10 @@ class Battle {
     resetBattle(){
         this.ally.hp = this.ally.max_hp;
         this.enemy.hp = this.enemy.max_hp;
+        this.ally.is_attacking = false;
+        this.enemy.is_attacking = false;
+        this.ally.energy = 0;
+        this.enemy.energy = 0;
         Battle.updateHP(true, this.ally);
         Battle.updateHP(false, this.enemy);
         Battle.finishDiv.classList.remove('show');

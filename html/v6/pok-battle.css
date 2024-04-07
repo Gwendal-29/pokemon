@@ -212,8 +212,45 @@
 }
 
 .move {
+    overflow: hidden;
     width: 75px;
     height: 75px;
     border-radius: 50%;
+    background-color: #007bff;
+    position: relative;
+}
+
+.move .energy {
     background-color: pink;
+    width: 100%;
+}
+
+.hp-info {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.hp-info .bar {
+    width: 75%;
+    height: 10px;
+    background-color: rgb(79, 79, 79);
+    border-radius: 25px;
+    position: relative;
+}
+
+.hp-info .bar .actual {
+    height: 100%;
+    background-color: rgb(4, 255, 0);
+    border-radius: 25px;
+}
+
+.hp-info .bar .actual.medium {
+    background-color: rgb(255, 164, 27);
+}
+
+.hp-info .bar .actual.low {
+    background-color: rgb(255, 0, 0);
 }
