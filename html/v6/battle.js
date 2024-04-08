@@ -197,6 +197,8 @@ class Battle {
         Battle.updateHP(true, this.ally);
         Battle.updateHP(false, this.enemy);
         Battle.finishDiv.classList.remove('show');
+        Battle.pokemonAlly.querySelector('.actual').classList.remove('medium', 'low');
+        Battle.pokemonEnemy.querySelector('.actual').classList.remove('medium', 'low');;
     }
 
 }
