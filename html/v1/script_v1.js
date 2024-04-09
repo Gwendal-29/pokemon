@@ -1,43 +1,72 @@
-const pokemonList = document.querySelector('table-wrapper>table>tbody');
+const pokemonList = document.querySelector('table>tbody');
+const pageInfos = document.querySelectorAll('p.info-page');
 
-document.addEventListener('DOMContentLoaded', () => {
+/* Fonction utilitaire, qui créé un élément <td> contenant une <img> qui à pour src : url et alt : name */
+const createTDWithImage = (url, name) => {
+    let td_img = document.createElement('td');
+    let img = document.createElement('img');
+    img.src = url;
+    img.alt = name;
+    td_img.appendChild(img);
+    return td_img;
+}
 
-    Pokemon.import_pokemon();
-    showPokemons(Pokemon.all_pokemons);
+const bigImage = document.getElementById('big-img');
 
-});
+var pokemonToShow = [];
 
-
-const showPokemons = (pokemons) => {
+/* Affiche les pokémons dans le <table> pokemonList. */
+const showPokemons = () => {
     pokemonList.innerHTML = '';
-    Object.values(pokemons).forEach((p) => {
+
+    pokemonToShow.forEach((p) => {
         let tr = document.createElement('tr');
+
         let info = [
             p.id,
             p.name,
             // enleve le "génération" du text quand la size est < 600 (UNIQUEMENT LORS DU RAFRAICHISSEMENT)
             window.screen.width > 600 ? p.gen : p.gen.replace('Generation', ""),
-            p.types,
             p.stamina,
             p.attack,
             p.defense
         ];
 
-        info.forEach((text) => {
+        // Transforme les infos en <td>
+        info = info.map((text) => {
             let td = document.createElement('td');
             td.textContent = text;
-            tr.appendChild(td);
+            return td;
+        });
+        
+        // Créé un <td> contenant les <img> correspondant au types
+        let td_types = document.createElement('td');
+        p.types.forEach((t) => {
+            let img = document.createElement('img');
+            img.src = "../" + Type.getImgUrl(t);
+            img.alt = t + " type logo";
+            td_types.append(img);
         });
 
-        let td_img = document.createElement('td');
-        let img = document.createElement('img');
-        img.src = "../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp";
-        img.alt = p.name + " image";
+        // Ajoute le <td> des imgs à la position 3.
+        info.splice(3, 0, td_types);
 
-        td_img.appendChild(img);
-        
+        // Ajoute les <td> dans le <tr>
+        tr.append(...info);
+
+        let td_img = createTDWithImage("../webp/images/" + Pokemon.formatPokemonId(p.id) + ".webp", p.name + " image");
+
         tr.appendChild(td_img);
-
+        // Ajout la ligne à la liste.
         pokemonList.appendChild(tr);
     });
 }
+
+/* Lorsque la page est chargé : */
+document.addEventListener('DOMContentLoaded', () => {
+    /* On importe nos pokémons depuis la classe Pokemon */
+    Pokemon.import_pokemon();
+
+    pokemonToShow = Object.values(Pokemon.all_pokemons);
+    showPokemons();
+});

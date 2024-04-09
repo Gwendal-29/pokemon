@@ -1,8 +1,6 @@
 const pokemonList = document.querySelector('table>tbody');
 const pageInfos = document.querySelectorAll('p.info-page');
 
-const errorMessage = document.getElementById('error-message');
-
 const getCookie = (name) => {
     const cookies = document.cookie.split('; ');
     let cookie = cookies.find((c) => c.split('=')[0] == name); // cherche si parmis la liste des cookies on a un cookie nommé 'name' sinon renvoie undefined
@@ -38,7 +36,6 @@ var pokemonToShow = [];
 
 const showPokemons = () => {
     pokemonList.innerHTML = '';
-    errorMessage.style.display = "none";
     pageTotal = Math.ceil(pokemonToShow.length / pokemonsPerPage);
 
     pageInfos.forEach((info) => info.textContent = currentPage + "/" + pageTotal)
@@ -49,12 +46,6 @@ const showPokemons = () => {
 
     updateNextButtons();
     updatePrevButtons();
-
-    if (currentPokemons.length === 0){
-        errorMessage.textContent = 'Nothing results...';
-        errorMessage.style.display = "flex";
-        return;
-    }
 
     currentPokemons.forEach((p) => {
         let tr = document.createElement('tr');
