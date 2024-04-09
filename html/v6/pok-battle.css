@@ -216,13 +216,27 @@
     width: 75px;
     height: 75px;
     border-radius: 50%;
-    background-color: #007bff;
     position: relative;
 }
 
-.move .energy {
+.move img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.move .energy,  .sup {
+    position: absolute;
     background-color: pink;
     width: 100%;
+    height: 100%;
+    z-index: 2;
+    top: 0;
+    left: 0;
+}
+
+.sup {
+    opacity: 0;
 }
 
 .hp-info {
@@ -254,3 +268,39 @@
 .hp-info .bar .actual.low {
     background-color: rgb(255, 0, 0);
 }
+
+div.ripple {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    visibility: hidden;
+    position: absolute;
+  }
+  
+  div.ripple::before {
+    visibility: visible;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    z-index: 1;
+    opacity: 0;
+    animation: ripple 1.2s cubic-bezier(0,.79,.06,.97);
+  }
+  
+  @keyframes ripple {
+    0% {
+      opacity: 1;
+      transform: scale(0);
+    }
+    80% {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  
+    100% {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  }

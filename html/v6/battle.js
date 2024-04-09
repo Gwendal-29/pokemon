@@ -81,11 +81,14 @@ class Battle {
     static finishDiv = document.getElementById('finish');
 
     static energyMove = document.querySelector('.energy');
+    static style = document.createElement('style');
+
 
     constructor (){
         this._enemy = null;
         this._ally = null;
         this._battle = false;
+        document.head.appendChild(Battle.style);
     }
 
     get enemy() { return this._enemy; }
@@ -108,6 +111,7 @@ class Battle {
                 Battle.noPokemonAlly.style.display = "none";
                 this.setDisplayPokemon(ally);
                 Battle.updateHP(ally, this.ally);
+                document.querySelector('.move img').src = "../" + Type.getImgUrl(this.ally.charged_move.type);
                 Battle.updateEnergy(this.ally);
             } else {
                 Battle.pokemonAlly.style.display = "none";
@@ -144,14 +148,16 @@ class Battle {
     }
     
     static updateEnergy(pokemon, energy = 0){
-        const energyBarHeight = (1 - (energy / pokemon.charged_move.energy_delta * -1)) * 100;
-        gsap.to(Battle.energyMove, { duration: 0.3, height: energyBarHeight + '%' });
+        var energyBarHeight = (1 - (energy / pokemon.charged_move.energy_delta * -1)) * 100;
+        if (energyBarHeight < 1) energyBarHeight = 0;
+        gsap.to(Battle.energyMove, { duration: 0.3, height: Math.floor(energyBarHeight) + '%' });
     }
 
     setDisplayPokemon(ally = true){
         if (ally){
             Battle.pokemonAlly.querySelector('.name').textContent = this.ally.pokemon.name;
             Battle.pokemonAlly.querySelector('img').src = "../webp/images/"+Pokemon.formatPokemonId(this.ally.pokemon.id)+".webp";
+            Battle.style.innerHTML = `.ripple::before { background-color: ${Battle.getColorByType(this.ally.fast_move.type)}; }`;
         } else {
             Battle.pokemonEnemy.querySelector('.name').textContent = this.enemy.pokemon.name;
             Battle.pokemonEnemy.querySelector('img').src = "../webp/images/"+Pokemon.formatPokemonId(this.enemy.pokemon.id)+".webp";
@@ -201,5 +207,47 @@ class Battle {
         Battle.pokemonEnemy.querySelector('.actual').classList.remove('medium', 'low');;
     }
 
+    static getColorByType(type) {
+        switch (type.toLowerCase()) {
+          case 'bug':
+            return '#4CAF50'; // Vert foncé
+          case 'dark':
+            return '#212121'; // Noir
+          case 'dragon':
+            return '#1565C0'; // Bleu foncé
+          case 'electric':
+            return '#FFEB3B'; // Jaune
+          case 'fairy':
+            return '#FFC0CB'; // Rose
+          case 'fighting':
+            return '#FF0000'; // Rouge
+          case 'fire':
+            return '#FF5722'; // Rouge orangé
+          case 'flying':
+            return '#03A9F4'; // Bleu clair
+          case 'ghost':
+            return '#4A148C'; // Violet foncé
+          case 'grass':
+            return '#8BC34A'; // Vert clair
+          case 'ground':
+            return '#795548'; // Brun
+          case 'ice':
+            return '#B3E5FC'; // Bleu clair
+          case 'normal':
+            return '#9E9E9E'; // Gris
+          case 'poison':
+            return '#9C27B0'; // Violet
+          case 'psychic':
+            return '#6A1B9A'; // Pourpre
+          case 'rock':
+            return '#616161'; // Gris foncé
+          case 'steel':
+            return '#757575'; // Gris métallique
+          case 'water':
+            return '#2196F3'; // Bleu
+          default:
+            return ''; // Retourne une chaîne vide si le type est inconnu
+        }
+      }
 }
 

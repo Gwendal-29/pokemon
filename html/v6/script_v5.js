@@ -499,11 +499,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     const moveButton = document.querySelector('.move');
-    moveButton.addEventListener('click', () => {
+    moveButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const ripple = document.createElement('div');
+        ripple.classList.add('ripple')
+        const divisionRect = moveButton.getBoundingClientRect();
+        ripple.style.left = divisionRect.left + 'px';
+        ripple.style.top = divisionRect.top + window.scrollY + 'px';
+        document.body.appendChild(ripple);
+            setTimeout(() => {
+              ripple.remove();
+            }, 1000);
         if (pokemonBattle._battle){
             pokemonBattle.enemy.attackBy(pokemonBattle.ally, Battle.pokemonEnemy.querySelector('img'), false, Battle.pokemonAlly.querySelector('img'), pokemonBattle);
         }
-    })
+    });
 });
 
 
