@@ -5,21 +5,22 @@ const errorMessage = document.getElementById('error-message');
 
 const getCookie = (name) => {
     const cookies = document.cookie.split('; ');
-    let cookie = cookies.find((c) => c.split('=')[0] == name);
-    if (cookie) return decodeURI(cookie.split("=")[1]);
+    let cookie = cookies.find((c) => c.split('=')[0] == name); // cherche si parmis la liste des cookies on a un cookie nommé 'name' sinon renvoie undefined
+    if (cookie) return decodeURI(cookie.split("=")[1]); //si le cookie n'est pas undefined on retourne celui-ci.
     return undefined;
 }
 
 const setCookie = (name, value, expire) => {
     const date = new Date();
     date.setDate(date + expire);
-    document.cookie = `${name}=${encodeURI(value)}; expires=${date.toUTCString()};`
+    document.cookie = `${name}=${encodeURI(value)}; expires=${date.toUTCString()};` // ajoute un cookie au format : name=<value>; expries=<date actuelle + expire>
 }
 
 var pageTotal = 0;
 var pokemonsPerPage = 25;
 var currentPage = getCookie("page") || 1;
 
+/* Fonction utilitaire, qui créé un élément <td> contenant une <img> qui à pour src : url et alt : name */
 const createTDWithImage = (url, name) => {
     let td_img = document.createElement('td');
     let img = document.createElement('img');
@@ -40,6 +41,8 @@ const typeFilter = document.getElementById('type-filter');
 var currentButtonSort = null;
 
 const sortingButtons = document.querySelectorAll('table.sortable th');
+
+/* Affiche les pokémons dans le <table> pokemonList en fonction de la pagnination. */
 
 const showPokemons = () => {
     pokemonList.innerHTML = '';
@@ -169,6 +172,7 @@ const pokemonWeakness = modalWrapper.querySelector('#pok-weakness');
 const pokemonChargedMoves = modalWrapper.querySelector('#charged_move>tbody');
 const pokemonFastMoves = modalWrapper.querySelector('#fast_move>tbody')
 
+/* Fonction qui permet d'afficher la modale contenant les informations détaillés du pokémon avec l'identifiant: id */
 const showMoreInfo = (id) => {
     getCookie();
     let pokemon = Pokemon.all_pokemons[id];
@@ -182,6 +186,7 @@ const showMoreInfo = (id) => {
     generationField.innerText = pokemon.gen;
 
     pokemonTypes.innerHTML = "";
+    // Affiche tous les types du pokémon.
     pokemon.types.forEach((t) => {
         let img = document.createElement('img');
         img.classList.add('type');
@@ -191,12 +196,14 @@ const showMoreInfo = (id) => {
     });
 
     pokemonStats.innerHTML = "";
+    // Affiche toutes les statistiques du pokémon (attaque, défense, stamina).
     [pokemon.attack, pokemon.defense, pokemon.stamina].forEach((stat) => {
         let td = document.createElement('td');
         td.textContent = stat;
         pokemonStats.appendChild(td);
     });
 
+    // Affiche tous les types pour lesquelles le pokémon affiché est faible. 
     pokemonWeakness.innerHTML = "";
     getBestAttacksForEnemy(pokemon.name).forEach((t) => {
         let li = document.createElement('li');
@@ -209,26 +216,32 @@ const showMoreInfo = (id) => {
 
     let attacks = pokemon.getAttacks();
 
+    // Affiche dans un tableau la liste des attaques chargées possibles pour le pokémon affiché.
     pokemonChargedMoves.innerHTML = "";
     attacks.filter((a) => a.is_charged).forEach((a) => {
         let tr = document.createElement('tr');
+        // Affiche chacune des statistques que l'on souhaites (nom, duration, energy, puissance, chance de coup critique.)
         [a.name, a.duration, a.energy_delta, a.power, a.critical_chance].forEach((info) => {
             let td = document.createElement('td');
             td.textContent = info;
             tr.appendChild(td);
         });
+        // Et on ajoute ensuite le type de l'attaque.
         pokemonChargedMoves.appendChild(tr);
         tr.appendChild(createTDWithImage("../" + Type.getImgUrl(a.type), a.type + " type image"));
     });
 
+    // Affiche dans un tableau la liste des attaques rapides possibles pour le pokémon affiché.
     pokemonFastMoves.innerHTML = "";
     attacks.filter((a) => !a.is_charged).forEach((a) => {
         let tr = document.createElement('tr');
+        // Affiche chacune des statistques que l'on souhaites (nom, duration, energy, puissance)
         [a.name, a.duration, a.energy_delta, a.power].forEach((info) => {
             let td = document.createElement('td');
             td.textContent = info;
             tr.appendChild(td);
         });
+        // Et on ajoute ensuite le type de l'attaque.
         tr.appendChild(createTDWithImage("../" + Type.getImgUrl(a.type), a.type + " type image"));
         pokemonFastMoves.appendChild(tr);
     });
@@ -238,7 +251,7 @@ closeButton.addEventListener('click', () => {
     modalWrapper.style.display = "none";
 });
 
-// Ferme lors du click en dehors 
+// Ferme lors du click en dehors de la modale.
 document.addEventListener('click', (e) => {
     if (!modalDetails.contains(e.target)){
         modalWrapper.style.display = "none";
@@ -264,19 +277,25 @@ const updatePrevButtons = () => {
 }
 
 updateNextButtons();
+
 nextButtons.forEach((button) => {
     updateNextButtons();
     button.addEventListener('click', () => {
         if (currentPage < pageTotal) {
+            // On incrémente le numéro de page.
             currentPage++;
+            // On retient la page a laquelle on est arrivé en cas de rafraichissement.
             setCookie('page', currentPage, 7);
+            // On réaffiche les pokémons.
             showPokemons();
         }
         if (currentPage === pageTotal){
+            // On met a jour le status du boutton.
             nextButtons.forEach((b) => b.disabled = true);
         }
     
         if (prevButtons[0].disabled){
+            // On met a jour le status du boutton.
             prevButtons.forEach((b) => b.disabled = false);
         }
     });
@@ -286,22 +305,28 @@ updatePrevButtons();
 prevButtons.forEach((button) => {
     button.addEventListener('click', () => {
         if (currentPage > 1) {
+            // On décrémente le numéro de page.
             currentPage--;
+            // On retient la page a laquelle on est arrivé en cas de rafraichissement.
             setCookie('page', currentPage, 7);
+            // On réaffiche les pokémons.
             showPokemons();
         }
 
         if (currentPage === 1){
+            // On met a jour le status du boutton.
             prevButtons.forEach((b) => b.disabled = true);
         }
     
         if (nextButtons[0].disabled){
+            // On met a jour le status du boutton.
             nextButtons.forEach((b) => b.disabled = false);
         }
     });
     
 });
 
+/* Objet contenant les paramêtre de la recherche (génération, types, name, ordre) */
 var queryFilters = {
     gen: null,
     types: null,
@@ -310,15 +335,21 @@ var queryFilters = {
     sortByReversed: getCookie("reversed") == "true" || false
 }
 
+/* Renvoie la listes des pokémons filtrer par l'objet queryFilters */
 const getPokemonsFiltered = () => {
     return Object.values(Pokemon.all_pokemons)
         .filter((p) => {
-            return (queryFilters.gen ? p.gen == queryFilters.gen : true)
+            // Si notre objet de recherche (queryFilters) contient une génération (queryFilters.gen) on vérifie que chaque pokémon est de cette génération.
+            return (queryFilters.gen ? p.gen == queryFilters.gen : true) 
+                // Si notre objet de recherche (queryFilters) contient un type (queryFilters.types) on vérifie que chaque pokémon est de ce type.
                 && (queryFilters.types ? p.types.includes(queryFilters.types) : true)
+                // Si notre objet de recherche (queryFilters) contient un type (queryFilters.names) on vérifie que chaque nom de pokémon contient ce nom.
                 && (queryFilters.names ? p.name.toLowerCase().includes(queryFilters.names.toLowerCase()) : true)
         });
 }
 
+/* Met à jour les pokémons a afficher (pokemonToShow) en fonction des filtrers ainsi que de l'ordre. 
+   Et actualise ceux déjà affiché. */
 const updatePokemonsToShow = (reset = true) => {
     pokemonToShow = getPokemonsFiltered();
     sortPokemon(queryFilters.sortBy, queryFilters.sortByReversed);
@@ -326,69 +357,86 @@ const updatePokemonsToShow = (reset = true) => {
     showPokemons();
 }
 
+/* Défini le nom dans l'objet de filtre queryFilters(.name) lors de la modification de celui-ci dans l'input. */
 nameFilter.addEventListener('input', () => {
     queryFilters.names = nameFilter.value;
     updatePokemonsToShow();
 });
 
+/* Défini la génération dans l'objet de filtre queryFilters(.gen) lors de la selection de celui-ci dans le <select>. */
 genFilter.addEventListener('change', (e) => {
     queryFilters.gen = e.target.value;
     updatePokemonsToShow();
 });
 
+/* Défini le type dans l'objet de filtre queryFilters(.types) lors de la selection de celui-ci dans le <select>. */
 typeFilter.addEventListener('change', (e) => {
     queryFilters.types = e.target.value;
     updatePokemonsToShow();
 });
 
+/* Réagit au click sur un entête du tableau */
 const handleClickSortPokemon = (element) => {
-    if (currentButtonSort == null){
+    if (currentButtonSort == null){     // Si aucun tri est en cours.
+        // Le tri deviens le cliquer.
         element.classList.add('sorting');
         queryFilters.sortBy = element.dataset.order;
         currentButtonSort = element;
-    } else if (element == currentButtonSort){
+    } else if (element == currentButtonSort){ // Si le tri en cours est le même que celui du click
         element.classList.toggle('asc');
+        // On inverse le sens du tri.
         queryFilters.sortByReversed = !queryFilters.sortByReversed;
     } else {
+        // Le tri deviens le cliquer.
+        // et on reset le sens avec celui par défaut.
+        // On retire également les styles à l'ancien bouttons.
         currentButtonSort.classList.remove('sorting', 'asc');
         element.classList.add('sorting');
         queryFilters.sortBy = element.dataset.order;
         queryFilters.sortByReversed = false;
         currentButtonSort = element;
     }
-
+    // Met a jour la liste des pokémons affiché, en conservant le numéro de page actuelle.
     updatePokemonsToShow(false);
 }
 
+/* On trie les pokemons en fonction d'un attribut (by). On indique également le trie ce fait ordre décroissant. */
 const sortPokemon = (by, reverse = false) => {
     let coef = reverse ? -1 : 1;
         pokemonToShow.sort((a, b) => {
             if (a[by] > b[by]){
                 return 1 * coef;
             } else if (a[by] == b[by]){
+                // En cas d'égalité pour l'attribut by, on compare le nom.
                 return a.name.localeCompare(b.name);
             } else {
                 return -1 * coef;
             }
         });
+    // On défini les cookies pour la récupération en cas de rafraichissement.
     setCookie('order', by, 7);
     setCookie('reversed', reverse, 7);
 }
 
+/* Lorsque la page est chargé : */
 document.addEventListener('DOMContentLoaded', () => {
+    /* On importe nos pokémons depuis la classe Pokemon */
     Pokemon.import_pokemon();
     
+    /* On met a jour les pokemons à afficher (sans remettre la page à la 1er.) */
     updatePokemonsToShow(false);
+
 
     const thOrders = Array.from(document.querySelectorAll('#pok-list th'));
 
-    // Initialisation des valeurs (a cause des cookies)
+    // Initialisation des valeurs de trie (a cause des cookies)
     currentButtonSort = thOrders.find((e) => e.dataset.order == queryFilters.sortBy);
     currentButtonSort.classList.add('sorting');
     if (queryFilters.sortByReversed) currentButtonSort.classList.add('asc');
     
     showPokemons();
 
+    /* Créé les options contenu dans le <select> permettant de choisir le Type qui sert de filtre.*/
     Object.keys(Type.all_types).forEach((t) => {
         let option = document.createElement('option');
         option.value = t;
@@ -396,8 +444,9 @@ document.addEventListener('DOMContentLoaded', () => {
         typeFilter.appendChild(option);
     });
 
+    /* Créé les options contenu dans le <select> permettant de choisir la génération qui sert de filtre.
+    Les générations est un ensemble (pour eviter les doublons) des générations de chaque pokémon.*/
     const generations = [...new Set(Object.values(Pokemon.all_pokemons).map(p => p.gen))];
-
     generations.forEach((gen) => {
         let option = document.createElement('option');
         option.value = gen;
@@ -405,6 +454,8 @@ document.addEventListener('DOMContentLoaded', () => {
         genFilter.appendChild(option);
     });
     
+    /* Pour chacun des entête de tableau, on leurs ajoute un evenement lors du click triant les pokémons par 
+       leurs propriété HTML data-order */
     sortingButtons.forEach((b) => {
         if (b.dataset.order != null){
             b.addEventListener('click', (e) => {

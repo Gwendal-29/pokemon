@@ -3,10 +3,24 @@ const pageInfos = document.querySelectorAll('p.info-page');
 
 const errorMessage = document.getElementById('error-message');
 
+const getCookie = (name) => {
+    const cookies = document.cookie.split('; ');
+    let cookie = cookies.find((c) => c.split('=')[0] == name); // cherche si parmis la liste des cookies on a un cookie nommé 'name' sinon renvoie undefined
+    if (cookie) return decodeURI(cookie.split("=")[1]); //si le cookie n'est pas undefined on retourne celui-ci.
+    return undefined;
+}
+
+const setCookie = (name, value, expire) => {
+    const date = new Date();
+    date.setDate(date + expire);
+    document.cookie = `${name}=${encodeURI(value)}; expires=${date.toUTCString()};` // ajoute un cookie au format : name=<value>; expries=<date actuelle + expire>
+}
+
 var pageTotal = 0;
 var pokemonsPerPage = 25;
-var currentPage = 1;
+var currentPage = getCookie("page") || 1;
 
+/* Fonction utilitaire, qui créé un élément <td> contenant une <img> qui à pour src : url et alt : name */
 const createTDWithImage = (url, name) => {
     let td_img = document.createElement('td');
     let img = document.createElement('img');
@@ -24,30 +38,11 @@ const nameFilter = document.getElementById('name-filter');
 const genFilter = document.getElementById('gen-filter');
 const typeFilter = document.getElementById('type-filter');
 
+var currentButtonSort = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-    Pokemon.import_pokemon();
-    pokemonToShow = Object.values(Pokemon.all_pokemons);
-    showPokemons();
+const sortingButtons = document.querySelectorAll('table.sortable th');
 
-    Object.keys(Type.all_types).forEach((t) => {
-        let option = document.createElement('option');
-        option.value = t;
-        option.textContent = t;
-        typeFilter.appendChild(option);
-    });
-
-    const generations = [...new Set(Object.values(Pokemon.all_pokemons).map(p => p.gen))];
-
-    generations.forEach((gen) => {
-        let option = document.createElement('option');
-        option.value = gen;
-        option.textContent = gen;
-        genFilter.appendChild(option);
-    })
-
-
-});
+/* Affiche les pokémons dans le <table> pokemonList en fonction de la pagnination. */
 
 const showPokemons = () => {
     pokemonList.innerHTML = '';
@@ -121,8 +116,11 @@ const showPokemons = () => {
         tr.appendChild(td_img);
 
         // Ajout de l'affichage des détails au click.
-        tr.addEventListener('click', () => showMoreInfo(p.id));
-
+        tr.addEventListener('click', (e) => {
+            showMoreInfo(p.id);
+            // Evite d'appeler l'événement sur via 'document' (qui ferme la modal)
+            e.stopPropagation();
+        });
         // Ajout la ligne à la liste.
         pokemonList.appendChild(tr);
     });
@@ -159,23 +157,27 @@ const getBestAttacksForEnemy = (name) => {
     }, {types: [], efficiency: -1}).types;
 }
 
-const modal = document.getElementById('modal-wrapper');
+const modalWrapper = document.getElementById('modal-details');
+const modalDetails = modalWrapper.querySelector('.modal'); 
+
 const closeButton = document.getElementById('cross');
 
-const pokemonName = modal.querySelector('h3');
-const pokemonId = modal.querySelector('#pok-id');
-const pokemonImg = modal.querySelector('.img_more_pok');
-const generationField = modal.querySelector('#pok-gen');
-const pokemonTypes = modal.querySelector('#pok-types');
-const pokemonStats = modal.querySelector('#pok-stats');
-const pokemonWeakness = modal.querySelector('#pok-weakness');
-const pokemonChargedMoves = modal.querySelector('#charged_move>tbody');
-const pokemonFastMoves = modal.querySelector('#fast_move>tbody')
+const pokemonName = modalWrapper.querySelector('h3');
+const pokemonId = modalWrapper.querySelector('#pok-id');
+const pokemonImg = modalWrapper.querySelector('.img_more_pok');
+const generationField = modalWrapper.querySelector('#pok-gen');
+const pokemonTypes = modalWrapper.querySelector('#pok-types');
+const pokemonStats = modalWrapper.querySelector('#pok-stats');
+const pokemonWeakness = modalWrapper.querySelector('#pok-weakness');
+const pokemonChargedMoves = modalWrapper.querySelector('#charged_move>tbody');
+const pokemonFastMoves = modalWrapper.querySelector('#fast_move>tbody')
 
+/* Fonction qui permet d'afficher la modale contenant les informations détaillés du pokémon avec l'identifiant: id */
 const showMoreInfo = (id) => {
+    getCookie();
     let pokemon = Pokemon.all_pokemons[id];
 
-    modal.style.display = "flex";
+    modalWrapper.style.display = "flex";
     
     pokemonName.innerText = pokemon.name;
     pokemonId.innerText = Pokemon.formatPokemonId(pokemon.id);
@@ -184,6 +186,7 @@ const showMoreInfo = (id) => {
     generationField.innerText = pokemon.gen;
 
     pokemonTypes.innerHTML = "";
+    // Affiche tous les types du pokémon.
     pokemon.types.forEach((t) => {
         let img = document.createElement('img');
         img.classList.add('type');
@@ -193,12 +196,14 @@ const showMoreInfo = (id) => {
     });
 
     pokemonStats.innerHTML = "";
+    // Affiche toutes les statistiques du pokémon (attaque, défense, stamina).
     [pokemon.attack, pokemon.defense, pokemon.stamina].forEach((stat) => {
         let td = document.createElement('td');
         td.textContent = stat;
         pokemonStats.appendChild(td);
     });
 
+    // Affiche tous les types pour lesquelles le pokémon affiché est faible. 
     pokemonWeakness.innerHTML = "";
     getBestAttacksForEnemy(pokemon.name).forEach((t) => {
         let li = document.createElement('li');
@@ -211,34 +216,50 @@ const showMoreInfo = (id) => {
 
     let attacks = pokemon.getAttacks();
 
+    // Affiche dans un tableau la liste des attaques chargées possibles pour le pokémon affiché.
     pokemonChargedMoves.innerHTML = "";
     attacks.filter((a) => a.is_charged).forEach((a) => {
         let tr = document.createElement('tr');
+        // Affiche chacune des statistques que l'on souhaites (nom, duration, energy, puissance, chance de coup critique.)
         [a.name, a.duration, a.energy_delta, a.power, a.critical_chance].forEach((info) => {
             let td = document.createElement('td');
             td.textContent = info;
             tr.appendChild(td);
         });
+        // Et on ajoute ensuite le type de l'attaque.
         pokemonChargedMoves.appendChild(tr);
         tr.appendChild(createTDWithImage("../" + Type.getImgUrl(a.type), a.type + " type image"));
     });
 
+    // Affiche dans un tableau la liste des attaques rapides possibles pour le pokémon affiché.
     pokemonFastMoves.innerHTML = "";
     attacks.filter((a) => !a.is_charged).forEach((a) => {
         let tr = document.createElement('tr');
+        // Affiche chacune des statistques que l'on souhaites (nom, duration, energy, puissance)
         [a.name, a.duration, a.energy_delta, a.power].forEach((info) => {
             let td = document.createElement('td');
             td.textContent = info;
             tr.appendChild(td);
         });
+        // Et on ajoute ensuite le type de l'attaque.
         tr.appendChild(createTDWithImage("../" + Type.getImgUrl(a.type), a.type + " type image"));
         pokemonFastMoves.appendChild(tr);
     });
 }
 
 closeButton.addEventListener('click', () => {
-    modal.style.display = "none";
+    modalWrapper.style.display = "none";
 });
+
+// Ferme lors du click en dehors de la modale.
+document.addEventListener('click', (e) => {
+    if (!modalDetails.contains(e.target)){
+        modalWrapper.style.display = "none";
+    } else {
+        console.log("containing modal")
+    }
+});
+
 
 const nextButtons = document.querySelectorAll('.next-page');
 const prevButtons = document.querySelectorAll('.prev-page');
@@ -256,18 +277,25 @@ const updatePrevButtons = () => {
 }
 
 updateNextButtons();
+
 nextButtons.forEach((button) => {
     updateNextButtons();
     button.addEventListener('click', () => {
         if (currentPage < pageTotal) {
+            // On incrémente le numéro de page.
             currentPage++;
+            // On retient la page a laquelle on est arrivé en cas de rafraichissement.
+            setCookie('page', currentPage, 7);
+            // On réaffiche les pokémons.
             showPokemons();
         }
         if (currentPage === pageTotal){
+            // On met a jour le status du boutton.
             nextButtons.forEach((b) => b.disabled = true);
         }
     
         if (prevButtons[0].disabled){
+            // On met a jour le status du boutton.
             prevButtons.forEach((b) => b.disabled = false);
         }
     });
@@ -277,54 +305,98 @@ updatePrevButtons();
 prevButtons.forEach((button) => {
     button.addEventListener('click', () => {
         if (currentPage > 1) {
+            // On décrémente le numéro de page.
             currentPage--;
+            // On retient la page a laquelle on est arrivé en cas de rafraichissement.
+            setCookie('page', currentPage, 7);
+            // On réaffiche les pokémons.
             showPokemons();
         }
 
         if (currentPage === 1){
+            // On met a jour le status du boutton.
             prevButtons.forEach((b) => b.disabled = true);
         }
     
         if (nextButtons[0].disabled){
+            // On met a jour le status du boutton.
             nextButtons.forEach((b) => b.disabled = false);
         }
     });
     
 });
 
+/* Objet contenant les paramêtre de la recherche (génération, types, name, ordre) */
 var queryFilters = {
     gen: null,
     types: null,
     names: ""
 }
+
+/* Renvoie la listes des pokémons filtrer par l'objet queryFilters */
 const getPokemonsFiltered = () => {
     return Object.values(Pokemon.all_pokemons)
         .filter((p) => {
-            return (queryFilters.gen ? p.gen == queryFilters.gen : true)
+            // Si notre objet de recherche (queryFilters) contient une génération (queryFilters.gen) on vérifie que chaque pokémon est de cette génération.
+            return (queryFilters.gen ? p.gen == queryFilters.gen : true) 
+                // Si notre objet de recherche (queryFilters) contient un type (queryFilters.types) on vérifie que chaque pokémon est de ce type.
                 && (queryFilters.types ? p.types.includes(queryFilters.types) : true)
+                // Si notre objet de recherche (queryFilters) contient un type (queryFilters.names) on vérifie que chaque nom de pokémon contient ce nom.
                 && (queryFilters.names ? p.name.toLowerCase().includes(queryFilters.names.toLowerCase()) : true)
         });
 }
 
-const updatePokemonsFiltered = () => {
+/* Met à jour les pokémons a afficher (pokemonToShow) en fonction des filtrers ainsi que de l'ordre. 
+   Et actualise ceux déjà affiché. */
+const updatePokemonsToShow = (reset = true) => {
     pokemonToShow = getPokemonsFiltered();
-    currentPage = 1;
+    if (reset) currentPage = 1;
     showPokemons();
 }
 
+/* Défini le nom dans l'objet de filtre queryFilters(.name) lors de la modification de celui-ci dans l'input. */
 nameFilter.addEventListener('input', () => {
     queryFilters.names = nameFilter.value;
-    updatePokemonsFiltered();
+    updatePokemonsToShow();
 });
 
+/* Défini la génération dans l'objet de filtre queryFilters(.gen) lors de la selection de celui-ci dans le <select>. */
 genFilter.addEventListener('change', (e) => {
     queryFilters.gen = e.target.value;
-    updatePokemonsFiltered();
+    updatePokemonsToShow();
 });
 
+/* Défini le type dans l'objet de filtre queryFilters(.types) lors de la selection de celui-ci dans le <select>. */
 typeFilter.addEventListener('change', (e) => {
     queryFilters.types = e.target.value;
-    updatePokemonsFiltered();
+    updatePokemonsToShow();
 });
 
+/* Lorsque la page est chargé : */
+document.addEventListener('DOMContentLoaded', () => {
+    /* On importe nos pokémons depuis la classe Pokemon */
+    Pokemon.import_pokemon();
+    
+    /* On met a jour les pokemons à afficher (sans remettre la page à la 1er.) */
+    updatePokemonsToShow(false);
+    
+    showPokemons();
 
+    /* Créé les options contenu dans le <select> permettant de choisir le Type qui sert de filtre.*/
+    Object.keys(Type.all_types).forEach((t) => {
+        let option = document.createElement('option');
+        option.value = t;
+        option.textContent = t;
+        typeFilter.appendChild(option);
+    });
+
+    /* Créé les options contenu dans le <select> permettant de choisir la génération qui sert de filtre.
+    Les générations est un ensemble (pour eviter les doublons) des générations de chaque pokémon.*/
+    const generations = [...new Set(Object.values(Pokemon.all_pokemons).map(p => p.gen))];
+    generations.forEach((gen) => {
+        let option = document.createElement('option');
+        option.value = gen;
+        option.textContent = gen;
+        genFilter.appendChild(option);
+    });
+});
