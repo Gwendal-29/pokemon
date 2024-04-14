@@ -533,7 +533,7 @@ const getPokemonCries = async (id) => {
         fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
         .then(resp => resp.json())
         .then(json => {
-            let audio = new Audio(json.cries.legacy);
+            let audio = new Audio(json.cries.latest);
             audio.volume = 0.5;
             audio.play();
         });
