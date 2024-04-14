@@ -3,6 +3,17 @@ const pageInfos = document.querySelectorAll('p.info-page');
 
 const errorMessage = document.getElementById('error-message');
 
+var audioIsActive = true;
+
+const audioButton = document.getElementById('audioActive');
+
+const toggleAudio = () => {
+    audioIsActive = !audioIsActive;
+    audioButton.src = audioIsActive ? "../webp/icon/volume-high.svg" : "../webp/icon/volume-off.svg";
+}
+
+audioButton.addEventListener('click', toggleAudio);
+
 const getCookie = (name) => {
     const cookies = document.cookie.split('; ');
     let cookie = cookies.find((c) => c.split('=')[0] == name);
@@ -175,6 +186,7 @@ var selectedChargedAttack = null;
 const pokemonBattle = new Battle();
 
 const showMoreInfo = (id) => {
+    getPokemonCries(id);
     getCookie();
     let pokemon = Pokemon.all_pokemons[id];
 
@@ -515,6 +527,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+const getPokemonCries = async (id) => {
+    if (audioIsActive){
+        fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
+        .then(resp => resp.json())
+        .then(json => {
+            let audio = new Audio(json.cries.legacy);
+            audio.volume = 0.5;
+            audio.play();
+        });
+    }
+}
 
 
 

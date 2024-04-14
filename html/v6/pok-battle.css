@@ -239,6 +239,13 @@
     opacity: 0;
 }
 
+.filters img {
+    width: 70px;
+}
+input::placeholder {
+    color: #97979789;
+}
+
 .hp-info {
     position: relative;
     display: flex;
